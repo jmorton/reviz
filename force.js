@@ -42,11 +42,11 @@ function angle(p1, p2) {
 function springForce(p1, p2, spring, equilibrium) {
   
   if (spring == undefined) {
-    spring = 0.01;
+    spring = 0.5;
   }
   
   if (equilibrium == undefined) {
-    equilibrium = 30.0;
+    equilibrium = 120.0;
   }
   
   var magnitude = distance(p1, p2);    

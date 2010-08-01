@@ -256,8 +256,8 @@ DefaultLayout.prototype.layout = function() {
 };
 
 var Style = {
-	fill:		"rgba(192,192,192,0.7)",
-	stroke: 	"rgba(128,128,128,0.7)",
+	fill:		"rgba(192,192,192,1.0)",
+	stroke: 	"rgba(225,225,225,0.7)",
 	drag : {
 		fill: 	"rgba(225,225,225,0.9)",
 		stroke: "rgba(128,128,128,0.9)"
