@@ -101,11 +101,3 @@ Graph.prototype.eachEdge = function(curry) {
 	}
 	return true;
 };
-
-function Node(id, label) {
-	this.id = id;
-	this.label = label;
-	this.x = 0;
-	this.y = 0;
-	this.adjacent = [];
-}

@@ -5,8 +5,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Graph on a Canvas</title>
 <style>
+* {
+	font-family: 'Droid Sans', 'Lucida Grande', 'Verdana';
+	font-size: 10pt;
+}
 #myGraph {
 	border: 1px solid #ccc;
+}
+#forceChoices {
+	display: none;
 }
 </style>
 <script src="default-layout.js"></script>
@@ -20,13 +27,31 @@
 
 <canvas id="myGraph" width="600" height="400"></canvas>
 
+<div id="controls">
+<form>
+<label for="layout">Layout</label>
+<select id="layout" name="layout">
+<option value="default">Default</option>
+<option value="force">Force Directed</option>
+</select>
+<fieldset id="forceChoices">
+<input id="repulsiveForce">
+<input id="attractiveForce">
+<input id="attractiveEquilibrium">
+<input id="maximumChildren">
+<input id="maximumAncestors">
+</fieldset>
+</form>
+</div>
+
 <script><!--
 
 var g = new Graph('myGraph');
 g.add('foo');
-g.connect('foo', 'bar', 'baz', 'grault', 'qux');
+g.connect('foo', 'bar', 'baz', 'grault', 'qux','quux','zork','smee','prosser','gru','phee','bor');
 g.layout();
 g.display();
+g.focus('foo');
 
 // Once the initial layout is done... switch to something fancy.
 g.layoutWith = new ForceDirectedLayout(g);
