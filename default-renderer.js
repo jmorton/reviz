@@ -61,6 +61,7 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	
 	this.context.fillStyle = Style.fill;
 	this.context.strokeStyle = Style.stroke;
+	this.context.fount = Style.font;
 	
 	if (this.dragged.indexOf(node) > -1) {
 		this.context.fillStyle = Style.drag.fill; 		
@@ -68,6 +69,7 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	} else if ((this.hovered.indexOf(node) > -1)) {
 		this.context.fillStyle = Style.hover.fill;
 		this.context.strokeStyle = Style.hover.stroke;
+		this.context.font = Style.hover.font;
 	}
 	
 	
@@ -77,7 +79,6 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	this.context.fill();
 	
 	this.context.fillStyle = "rgba(0,0,0,0.9)";
-	this.context.font = '800 10px/2 "Android Sans", sans-serif';
 	this.context.textAlign = 'center';
 	this.context.textBaseline = 'middle';
 	this.context.fillText(node.id, this.width/2, this.height/2);
@@ -247,12 +248,14 @@ DefaultRenderer.prototype.isPointInNode = function(point, node) {
 var Style = {
 	fill:		"rgba(192,192,192,1.0)",
 	stroke: 	"rgba(225,225,225,0.7)",
+	font:       '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
 	drag : {
 		fill: 	"rgba(225,225,225,0.9)",
 		stroke: "rgba(128,128,128,0.9)"
 	},
 	hover : {
 		fill: 	"rgba(225,225,225,0.9)",
-		stroke: "rgba(128,128,128,0.9)"
+		stroke: "rgba(128,128,128,0.9)",
+		font:    '800 14px/2 "Android Sans", "Lucida Grande", sans-serif'
 	}
 };
