@@ -14,20 +14,8 @@ function DefaultRenderer(id, graph) {
 	this.offset = { x: 0, y: 0 };
 	this.dragged = [];
 	this.hovered = [];
+	this.dragging = false;
 	this.listen();
-};
-
-var Style = {
-	fill:		"rgba(192,192,192,0.9)",
-	stroke: 	"rgba(128,128,128,0.5)",
-	drag : {
-		fill: 	"rgba(225,225,225,0.9)",
-		stroke: "rgba(128,128,128,0.9)"
-	},
-	hover : {
-		fill: 	"rgba(225,225,225,0.9)",
-		stroke: "rgba(128,128,128,0.9)"
-	}
 };
 
 /**
@@ -52,13 +40,15 @@ DefaultRenderer.prototype.draw = function() {
 	// Move the canvas to wherever it has been dragged.
 	this.context.translate(this.offset.x, this.offset.y);
 	this.context.scale(this.scale, this.scale);
-
-	this.drawEdge(this.graph.nodes['foo'], this.graph.nodes['bar']);
 	
-	var node;
+	for (index in this.graph.edges) {
+		this.drawEdge(
+			this.graph.edges[index][0],
+			this.graph.edges[index][1]);
+	}
+	
 	for (index in this.graph.nodes) {
-		node = this.graph.nodes[index];
-		this.drawNode(node);
+		this.drawNode(this.graph.nodes[index]);
 	}
 	
 	this.context.restore();
@@ -130,9 +120,18 @@ DefaultRenderer.prototype.listen = function() {
 			} else {
 				renderer.dragNode(event);
 			}
+		} else {
+			renderer.hovering(event);
 		}
-		renderer.hovering(event);
 		renderer.redraw();
+	}, false);
+	
+	this.canvas.addEventListener('dblclick', function(event) {
+		if (renderer.graph.isPlaying()) {
+			renderer.graph.stop();
+		} else {
+			renderer.graph.start();
+		}
 	}, false);
 	
 	this.canvas.addEventListener('mousewheel', function(event) {
@@ -155,8 +154,10 @@ DefaultRenderer.prototype.stopDragging = function(e) {
 };
 
 DefaultRenderer.prototype.dragScene = function(e) {
-	this.offset.x += (e.clientX - this.lastPoint.clientX);
-	this.offset.y += (e.clientY - this.lastPoint.clientY);
+	if (this.lastPoint != undefined) {
+		this.offset.x += (e.clientX - this.lastPoint.clientX);
+		this.offset.y += (e.clientY - this.lastPoint.clientY);
+	}
 	this.lastPoint = e;
 };
 
@@ -168,7 +169,18 @@ DefaultRenderer.prototype.dragNode = function(e) {
 	this.lastPoint = e;
 };
 
+DefaultRenderer.prototype.dragging = function(e) {
+//	this.hovered = this.containing(e);
+	return true;
+};
+
 DefaultRenderer.prototype.hovering = function(e) {
+	// I've decided to use a separate list so that we don't have
+	// to iterate over all nodes in order to get a subset of them.
+	// Also, it makes it easier to 'dehover' a node.  Instead
+	// of iterating over a list and setting a property, the list
+	// is destroyed/emptied.  If it makes more sense to iterate
+	// (and/or performant) then this approach should be changed.
 	this.hovered = this.containing(e);
 };
 
@@ -176,6 +188,11 @@ DefaultRenderer.prototype.zoom = function(e) {
 	this.scale += 0.001 * e.wheelDelta;
 	this.scale = Math.max( this.scale, 0.5 );
 	this.scale = Math.min( this.scale, 5.0 );
+};
+
+DefaultRenderer.prototype.focus = function(event) {
+	this.focused = this.containing(e);
+	return true;
 };
 
 DefaultRenderer.prototype.containing = function(event) {
@@ -186,6 +203,7 @@ DefaultRenderer.prototype.containing = function(event) {
 			nodes[nodes.length] = this.graph.nodes[index];
 		}
 	}
+	
 	return nodes;
 };
 
@@ -219,26 +237,33 @@ DefaultRenderer.prototype.isPointInNode = function(point, node) {
 };
 
 /**
- * Component for abstracting the layout of the graph.
+ * Component for abstracting the layout of the graph.  Very basic tiled layout.
  * 
  * @param graph
  * @returns
  */
-function DefaultLayout() {
+function DefaultLayout(graph) {
+	this.graph = graph;
 }
 
-DefaultLayout.prototype.layout = function(graph) {
-	return true;
+DefaultLayout.prototype.layout = function() {
+	var p = 10;
+	for (ix in this.graph.nodes) {
+		this.graph.nodes[ix].x = p*10;
+		this.graph.nodes[ix].y = p*10;
+		p += 1;
+	}
 };
 
-/**
- * Component for abstracting event handling.
- * 
- * @returns {DefaultListener}
- */
-function DefaultListener() {
-};
-
-DefaultListener.prototype.listen = function(event) {
-	return true;
+var Style = {
+	fill:		"rgba(192,192,192,0.7)",
+	stroke: 	"rgba(128,128,128,0.7)",
+	drag : {
+		fill: 	"rgba(225,225,225,0.9)",
+		stroke: "rgba(128,128,128,0.9)"
+	},
+	hover : {
+		fill: 	"rgba(225,225,225,0.9)",
+		stroke: "rgba(128,128,128,0.9)"
+	}
 };

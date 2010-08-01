@@ -11,6 +11,7 @@
 </style>
 <script src="defaults.js"></script>
 <script src="graph.js"></script>
+<script src="force.js"></script>
 </head>
 
 <body>
@@ -26,8 +27,19 @@ g.nodes['foo'].y = 200;
 g.add('bar');
 g.nodes['bar'].x = 100;
 g.nodes['bar'].y = 100;
+g.add('baz')
+g.add('grault')
+g.add('qux')
 g.connect('foo','bar')
+g.connect('foo','baz')
+g.connect('foo','grault')
+g.connect('foo','qux')
+
+g.layout();
 g.display();
+
+g.layoutWith = new ForceDirectedLayout(g);
+g.layout();
 
 --></script>
 </body>
