@@ -9,10 +9,16 @@
 	font-family: 'Droid Sans', 'Lucida Grande', 'Verdana';
 	font-size: 10pt;
 }
+h1 {
+	font-size: 2em;
+}
+h2 {
+	font-size: 1.4em;
+}
 #myGraph {
 	border: 1px solid #ccc;
 }
-#forceChoices {
+#forceChoices, #controls {
 	display: none;
 }
 </style>
@@ -45,6 +51,16 @@
 </fieldset>
 </form>
 </div>
+
+<h2>Basic Controls</h2>
+<ul class="tips">
+<li>Double click the graph drawing area to start/stop automatic layout.</li> 
+<li>Use your mousewheel to zoom in and out</li>
+<li>Click and drag a node to move it, this will also make it temporarily immune to layout forces.</li>
+<li>Click and drag the background to pan</li>
+<li>TODO: Double click a node to bring it into focus.</li> 
+<li>TODO: One node selected at a time.</li> 
+</ul>
 
 <script><!--
 
