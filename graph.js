@@ -38,13 +38,18 @@ Graph.prototype.connect = function(parentNodeId) {
 	var parentNode = this.nodes[parentNodeId];
 	var childNode;
 	
-	for (i = arguments.length; i > 0; i--) {
+	for (i = arguments.length-1; i >= 0; i--) {
 		childNode = this.nodes[arguments[i]];
 		if (childNode == undefined) {
 			childNode = new Node(arguments[i]);
 			this.nodes[childNode.id] = childNode;
 		}
+		// IMPORTANT: The graph is implemented as
+		// a directed graph, but in order to have
+		// simplified depth controls, two edges
+		// are formed.
 		this.edges.push([parentNode,childNode]);
+		this.edges.push([childNode,parentNode]);
 	}
 	
 	return this;
@@ -78,6 +83,15 @@ Graph.prototype.isPlaying = function() {
 	return (this.playInterval != undefined) && (this.playInterval != null);
 };
 
+Graph.prototype.activeNodes = function() {
+	var activeNodes = [];
+	// nodes that aren't immune
+	return activeNodes;
+};
+
+Graph.prototype.visibleNodes = function() {
+};
+
 Graph.prototype.eachPair = function(curry) {
 	// this isn't right.  it's doing each pair twice.
 	var node1, node2;
@@ -86,7 +100,7 @@ Graph.prototype.eachPair = function(curry) {
 		for (i2 in this.nodes) {
 			node2 = this.nodes[i2];
 			if (i1 != i2) {
-				curry.call(this, node1, node2);
+				curry.call(this.displayWith, node1, node2);
 			}
 		}
 	}
@@ -97,7 +111,7 @@ Graph.prototype.eachEdge = function(curry) {
 	var pair;
 	for (index in this.edges) {
 		pair = this.edges[index];
-		curry.call(this, pair[0], pair[1]);
+		curry.call(this.displayWith, pair[0], pair[1]);
 	}
 	return true;
 };

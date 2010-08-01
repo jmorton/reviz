@@ -70,10 +70,18 @@ DefaultRenderer.prototype.drawNode = function(node) {
 		this.context.strokeStyle = Style.hover.stroke;
 	}
 	
+	
 	// Center the x/y of the node
 	this.drawPath(node);
 	this.context.stroke(0, 0, this.width, this.height);
 	this.context.fill();
+	
+	this.context.fillStyle = "rgba(0,0,0,0.9)";
+	this.context.font = '800 10px/2 "Android Sans", sans-serif';
+	this.context.textAlign = 'center';
+	this.context.textBaseline = 'middle';
+	this.context.fillText(node.id, this.width/2, this.height/2);
+
 	this.context.restore();
 };
 

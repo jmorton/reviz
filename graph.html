@@ -18,7 +18,7 @@
 </style>
 <script src="default-layout.js"></script>
 <script src="default-renderer.js"></script>
-<script src="force.js"></script>
+<script src="force-layout.js"></script>
 <script src="graph.js"></script>
 <script src="node.js"></script>
 </head>
@@ -32,7 +32,7 @@
 <label for="layout">Layout</label>
 <select id="layout" name="layout">
 <option value="default">Default</option>
-<option value="force">Force Directed</option>
+<option value="force-layout">Force Directed</option>
 </select>
 <fieldset id="forceChoices">
 <input id="repulsiveForce">
@@ -48,10 +48,13 @@
 
 var g = new Graph('myGraph');
 g.add('foo');
+g.add('jon');
 g.connect('foo', 'bar', 'baz', 'grault', 'qux','quux','zork','smee','prosser','gru','phee','bor');
+g.connect('jon','amy','tom','courtney','mom','dad');
+g.connect('jon','foo');
+g.connect('foo','jon')
 g.layout();
 g.display();
-g.focus('foo');
 
 // Once the initial layout is done... switch to something fancy.
 g.layoutWith = new ForceDirectedLayout(g);
