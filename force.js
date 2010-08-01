@@ -2,6 +2,12 @@ function ForceDirectedLayout(graph) {
 	this.graph = graph;
 }
 
+ForceDirectedLayout.prototype.layout = function() {
+	this.graph.eachPair(ForceDirectedLayout.repel);
+	this.graph.eachEdge(ForceDirectedLayout.attract);
+	return true;
+};
+
 ForceDirectedLayout.distance = function(n1,n2) {
 	return Math.sqrt(Math.pow((n1.x-n2.x),2) + Math.pow((n1.y-n2.y),2));
 };
@@ -14,12 +20,6 @@ ForceDirectedLayout.repel = function(n1,n2) {
 ForceDirectedLayout.attract = function(n1,n2) {
 	var force = springForce(n1,n2);
 	n2.add(force, n1);
-};
-
-ForceDirectedLayout.prototype.layout = function() {
-	this.graph.eachPair(ForceDirectedLayout.repel);
-	this.graph.eachEdge(ForceDirectedLayout.attract);
-	return true;
 };
 
 /** Calculates the distance between to objects.

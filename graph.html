@@ -9,9 +9,11 @@
 	border: 1px solid #ccc;
 }
 </style>
-<script src="defaults.js"></script>
-<script src="graph.js"></script>
+<script src="default-layout.js"></script>
+<script src="default-renderer.js"></script>
 <script src="force.js"></script>
+<script src="graph.js"></script>
+<script src="node.js"></script>
 </head>
 
 <body>
@@ -21,7 +23,7 @@
 <script><!--
 
 var g = new Graph('myGraph');
-g.add('foo', 'bar', 'baz', 'grault', 'qux', 'quux');
+g.add('foo');
 g.connect('foo', 'bar', 'baz', 'grault', 'qux');
 g.layout();
 g.display();

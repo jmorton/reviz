@@ -40,9 +40,11 @@ Graph.prototype.connect = function(parentNodeId) {
 	
 	for (i = arguments.length; i > 0; i--) {
 		childNode = this.nodes[arguments[i]];
-		if (childNode != undefined) {
-			this.edges.push([parentNode,childNode]);
+		if (childNode == undefined) {
+			childNode = new Node(arguments[i]);
+			this.nodes[childNode.id] = childNode;
 		}
+		this.edges.push([parentNode,childNode]);
 	}
 	
 	return this;
@@ -77,6 +79,7 @@ Graph.prototype.isPlaying = function() {
 };
 
 Graph.prototype.eachPair = function(curry) {
+	// this isn't right.  it's doing each pair twice.
 	var node1, node2;
 	for (i1 in this.nodes) {
 		node1 = this.nodes[i1];
@@ -106,13 +109,3 @@ function Node(id, label) {
 	this.y = 0;
 	this.adjacent = [];
 }
-
-Node.prototype.add = function(force) {
-	this.x += force.x;
-	this.y += force.y;
-};
-
-Node.prototype.connect = function(node) {
-	this.adjacent.push(node);
-};
-
