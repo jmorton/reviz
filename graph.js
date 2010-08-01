@@ -15,11 +15,16 @@ function Graph(id) {
  * @param arg
  * @returns
  */
-Graph.prototype.add = function(id) {
-	var node = new Node(id);
-	if (this.nodes[id] == undefined) {
-		this.nodes[id] = node;
+Graph.prototype.add = function() {
+	var node;
+	
+	for (i = 0; i < arguments.length; i++) {
+		node = new Node(arguments[i]);
+		if (this.nodes[node.id] == undefined) {
+			this.nodes[node.id] = node;
+		}
 	}
+	
 	return this;
 };
 
@@ -29,15 +34,18 @@ Graph.prototype.add = function(id) {
  * @param node2
  * @returns
  */
-Graph.prototype.connect = function(node1, node2) {
-	var n1 = this.nodes[node1];
-	var n2 = this.nodes[node2];
+Graph.prototype.connect = function(parentNodeId) {
+	var parentNode = this.nodes[parentNodeId];
+	var childNode;
 	
-	if ((n1 == undefined) || (n2 == undefined)) {
-		return false;
-	} else {
-		this.edges.push([n1,n2]);
+	for (i = arguments.length; i > 0; i--) {
+		childNode = this.nodes[arguments[i]];
+		if (childNode != undefined) {
+			this.edges.push([parentNode,childNode]);
+		}
 	}
+	
+	return this;
 };
 
 Graph.prototype.display = function() {

@@ -21,25 +21,13 @@
 <script><!--
 
 var g = new Graph('myGraph');
-g.add('foo');
-g.nodes['foo'].x = 200;
-g.nodes['foo'].y = 200;
-g.add('bar');
-g.nodes['bar'].x = 100;
-g.nodes['bar'].y = 100;
-g.add('baz')
-g.add('grault')
-g.add('qux')
-g.connect('foo','bar')
-g.connect('foo','baz')
-g.connect('foo','grault')
-g.connect('foo','qux')
-
+g.add('foo', 'bar', 'baz', 'grault', 'qux', 'quux');
+g.connect('foo', 'bar', 'baz', 'grault', 'qux');
 g.layout();
 g.display();
 
+// Once the initial layout is done... switch to something fancy.
 g.layoutWith = new ForceDirectedLayout(g);
-g.layout();
 
 --></script>
 </body>
