@@ -1,24 +1,36 @@
 function ForceDirectedLayout(graph) {
 	this.graph = graph;
-}
+};
 
-ForceDirectedLayout.prototype.layout = function() {
+/**
+ * Arranges the nodes in a layout by gradually moving connected nodes
+ * closer to each other, and unconnected nodes away from each other.
+ * 
+ * ForceDirectedLayout follows the Layout protocol:
+ * - It expects layout to be called with a reference to a graph
+ * - It invokes eachPair and eachEdge on the graph and specifies
+ *   the methods it wants to apply to each pair and each node.
+ * - #repel and #attract follow the  
+ * 
+ * Basic overview:
+ * 1. Repel each node from every other node.
+ * 2. Attract each node to every other connected node.
+ * 
+ * @param graph {Graph}
+ * @returns
+ */ForceDirectedLayout.prototype.layout = function() {
 	this.graph.eachPair(ForceDirectedLayout.repel);
 	this.graph.eachEdge(ForceDirectedLayout.attract);
 	return true;
 };
 
-ForceDirectedLayout.distance = function(n1,n2) {
-	return Math.sqrt(Math.pow((n1.x-n2.x),2) + Math.pow((n1.y-n2.y),2));
-};
-
 // this refers to the display 
-ForceDirectedLayout.repel = function(n1,n2) {
-	if ((this.dragged.indexOf(n1) >= 0) ||
+ForceDirectedLayout.repel = function(attractor,n2) {
+	if ((this.dragged.indexOf(attractor) >= 0) ||
 		(this.dragged.indexOf(n2) >= 0)) {
 		return false;
 	}
-	n1.add(repulsiveForce(n1,n2), n2);
+	attractor.add(repulsiveForce(attractor,n2), n2);
 };
 
 // this refers to the display. 
@@ -32,20 +44,27 @@ ForceDirectedLayout.attract = function(attractor,attracted) {
 /** Calculates the distance between to objects.
 @return [float] Euclidean distance
 */
-function distance(p1, p2) {
-  return Math.sqrt(Math.pow(p1.x-p2.x, 2) + Math.pow(p1.y-p2.y, 2));
-}
+ForceDirectedLayout.distance = function(p1, p2) {
+	return Math.sqrt(Math.pow(p1.x-p2.x, 2) + Math.pow(p1.y-p2.y, 2));
+};
 
 /** Calculate the angle between two objects.
 @return [float] Angle in radians
 */
-function angle(p1, p2) {
-  var opposite = p1.y - p2.y;
-  var adjacent = p1.x - p2.x;
-  return Math.atan(opposite/adjacent);
+ForceDirectedLayout.angle = function(p1, p2) {
+	// angle = arc tangent of opposite over adjacent
+	return Math.atan((p1.y - p2.y) / (p1.x - p2.x));
 };
 
-/** return a point between two points */
+/**
+ * Calculates the vector of force between two points
+ * 
+ * @param p1
+ * @param p2
+ * @param spring
+ * @param equilibrium
+ * @returns {Vector}
+ */
 function springForce(p1, p2, spring, equilibrium) {
   
   if (spring == undefined) {
@@ -56,8 +75,8 @@ function springForce(p1, p2, spring, equilibrium) {
     equilibrium = 120.0;
   }
   
-  var magnitude = distance(p1, p2);    
-  var theta = angle(p1, p2);
+  var magnitude = ForceDirectedLayout.distance(p1, p2);    
+  var theta = ForceDirectedLayout.angle(p1, p2);
   
   if (magnitude < equilibrium) {
     return { x:0, y:0 };
@@ -92,8 +111,8 @@ function repulsiveForce(p1, p2, force) {
 		force = 30.0;
 	}
 		
-	var magnitude = (force / distance(p1,p2)) * 0.6;
-	var theta = angle(p1, p2);
+	var magnitude = (force / ForceDirectedLayout.distance(p1,p2)) * 0.6;
+	var theta = ForceDirectedLayout.angle(p1, p2);
 	
 	var dx = magnitude * Math.cos(theta);
 	var dy = magnitude * Math.sin(theta);

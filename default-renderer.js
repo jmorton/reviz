@@ -4,9 +4,7 @@
  * @param id
  * @returns {DefaultGraphDrawer}
  */
-function DefaultRenderer(id, graph) {
-	this.canvas = document.getElementById(id);
-	this.context = this.canvas.getContext('2d');
+function DefaultRenderer(graph) {
 	this.graph = graph;
 	this.width = 100;
 	this.height = 30;
@@ -16,6 +14,17 @@ function DefaultRenderer(id, graph) {
 	this.hovered = [];
 	this.dragging = false;
 	this.listen();
+};
+
+DefaultRenderer.prototype = {
+	set graph(value) {
+		this._graph = value;
+		this.canvas = value.canvas;
+		this.context = value.canvas.getContext('2d');
+	},
+	get graph() {
+		return this._graph;
+	}
 };
 
 /**

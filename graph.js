@@ -2,12 +2,37 @@
  * @author Jon Morton (jon.morton@gmail.com)
  *
  */
-function Graph(id) {
+function Graph(canvasId) {
 	this.nodes = {};
 	this.edges = [];
-	this.layoutWith = new DefaultLayout(this);
-	this.displayWith = new DefaultRenderer(id, this);
+	this.canvas = canvasId;
+	this.layout = new DefaultLayout(this);
+	this.display = new DefaultRenderer(this);
 }
+
+Graph.prototype = {
+	set canvas(id) {
+		this._canvas = document.getElementById(id);
+	},
+	get canvas() {
+		return this._canvas;
+	},
+	set layout(value) {
+		this.layoutWith = value;
+		this.layoutWith.graph = this;
+	},
+	get layout() {
+		return this.layoutWith;
+	},
+	set display(value) {
+		this.displayWith = value;
+		this.displayWith.graph = this;
+	},
+	get display() {
+		return this.displayWith;
+	}
+};
+
 
 /**
  * Puts a node into the graph.
@@ -55,17 +80,17 @@ Graph.prototype.connect = function(parentNodeId) {
 	return this;
 };
 
-Graph.prototype.display = function() {
+Graph.prototype.applyDisplay = function() {
 	return this.displayWith.redraw();
 };
 
-Graph.prototype.layout = function() {
+Graph.prototype.applyLayout = function() {
 	return this.layoutWith.layout();
 };
 
 Graph.prototype.animate = function(g) {
-	g.layout();
-	g.display();
+	g.applyLayout();
+	g.applyDisplay();
 };
 
 Graph.prototype.start = function() {

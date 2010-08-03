@@ -60,6 +60,7 @@ with(graph) {
 	this.drawer.apply(graph);
 }
 
+connect( node('a'), node('b') )
   
   
   

@@ -71,11 +71,11 @@ g.connect('foo', 'bar', 'baz', 'grault', 'qux','quux','zork','smee','prosser','g
 g.connect('jon','amy','tom','courtney','mom','dad');
 g.connect('jon','foo');
 g.connect('foo','jon')
-g.layout();
-g.display();
+g.applyLayout();
+g.applyDisplay();
 
 // Once the initial layout is done... switch to something fancy.
-g.layoutWith = new ForceDirectedLayout(g);
+g.layout = new ForceDirectedLayout(g);
 
 --></script>
 </body>
