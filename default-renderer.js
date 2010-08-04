@@ -8,6 +8,7 @@ function DefaultRenderer(graph) {
 	this.graph = graph;
 	this.width = 100;
 	this.height = 30;
+	this.nodeSize = 20;
 	this.scale = 1.0;
 	this.offset = { x: 0, y: 0 };
 	this.hovered = null;
@@ -34,7 +35,7 @@ DefaultRenderer.prototype = {
  */
 DefaultRenderer.prototype.blank = function() {
 	this.context.save();
-  this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+	this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
 	this.context.fillStyle = Style.Scene.background;
 	this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
 	this.context.restore();
@@ -42,6 +43,7 @@ DefaultRenderer.prototype.blank = function() {
 
 /**
  * Render the nodes and edges in a graph to the context.
+ * 
  * @param graph
  * @returns
  */
@@ -63,8 +65,8 @@ DefaultRenderer.prototype.draw = function() {
 	}
 	
 	if (this.hovered) {
-	  this.drawNode(this.hovered)
-  }
+	  this.drawNode(this.hovered);
+	}
 	
 	this.context.restore();
 
@@ -97,16 +99,16 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	this.context.fillStyle = "rgba(0,0,0,0.9)";
 	this.context.textAlign = 'center';
 	this.context.textBaseline = 'middle';
-	this.context.fillText(node.id, this.width/2, this.height/2);
+	this.context.fillText(node.id, 0, this.nodeSize/2-8);
 
 	this.context.restore();
 };
 
 DefaultRenderer.prototype.drawPath = function(node) {
-  this.context.translate(node.x-this.width/2, node.y-this.height/2);
+  this.context.translate(node.x, node.y);
   with(this.context) {
     beginPath();
-    arc(this.width/2, this.height/2, this.height, 0, Math.PI*2, false);
+    arc(0, 0, this.nodeSize, 0, Math.PI*2, false);
     closePath();
   }
 };
@@ -160,11 +162,10 @@ DefaultRenderer.prototype.listen = function() {
 			renderer.graph.start();
 		}
 	}, false);
-	
-	this.canvas.addEventListener('mousewheel', function(event) {
-		renderer.zoom(event);
-		renderer.redraw();
-	});
+	/*
+	 * this.canvas.addEventListener('mousewheel', function(event) {
+	 * renderer.zoom(event); renderer.redraw(); });
+	 */
 
 };
 
@@ -197,9 +198,9 @@ DefaultRenderer.prototype.dragNode = function(e) {
 DefaultRenderer.prototype.hovering = function(e) {
 	// I've decided to use a separate list so that we don't have
 	// to iterate over all nodes in order to get a subset of them.
-	// Also, it makes it easier to 'dehover' a node.  Instead
+	// Also, it makes it easier to 'dehover' a node. Instead
 	// of iterating over a list and setting a property, the list
-	// is destroyed/emptied.  If it makes more sense to iterate
+	// is destroyed/emptied. If it makes more sense to iterate
 	// (and/or performant) then this approach should be changed.
 	this.hovered = DefaultRenderer.topMost(this.containing(e));
 };
@@ -228,9 +229,8 @@ DefaultRenderer.prototype.containing = function(event) {
 };
 
 /**
- * Get the relative coordinates of a click.  Takes into account the
- * position of the canvas and the renderer offset that occurs during
- * dragging and scaling.
+ * Get the relative coordinates of a click. Takes into account the position of
+ * the canvas and the renderer offset that occurs during dragging and scaling.
  * 
  * @param event
  * @returns
@@ -243,16 +243,20 @@ DefaultRenderer.prototype.relativePoint = function(event) {
 };
 
 /**
- * Create the node path and determine if it actually contains the
- * specified point.  The renderer should handle this because the
- * node doesn't know how to draw itself.
+ * Create the node path and determine if it actually contains the specified
+ * point. The renderer should handle this because the node doesn't know how to
+ * draw itself.
  */
 DefaultRenderer.prototype.isPointInNode = function(point, node) {
+	/*
+	 * var result; this.context.save(); this.drawPath(node); result =
+	 * this.context.isPointInPath(point.x, point.y); this.context.restore();
+	 * return result;
+	 */
 	var result;
-	this.context.save();
-	this.drawPath(node);
-	result = this.context.isPointInPath(point.x, point.y);
-	this.context.restore();
+	
+	result = Graph.distance(point, node) < this.nodeSize;
+	
 	return result;
 };
 
@@ -272,10 +276,10 @@ var Style = {
   },
   
   Node : {
-  	fill:		    "rgba(210,210,210,0.9)",
+  	fill:		  "rgba(210,210,210,0.8)",
   	stroke: 	  "rgba(55,55,55,0.9)",
-  	lineWidth:   3,
-  	font:       '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
+  	lineWidth:    3,
+  	font:         '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
   	drag : {
   		fill: 	  "rgba(225,225,225,0.9)",
   		stroke:   "rgba(128,128,128,0.9)"

@@ -114,9 +114,13 @@ function repulsiveForce(p1, p2, force) {
 	var magnitude = (force / ForceDirectedLayout.distance(p1,p2)) * 0.6;
 	var theta = ForceDirectedLayout.angle(p1, p2);
 	
+	if (magnitude < 0.1) {
+		return { x:0, y:0 };
+	}
+  
 	var dx = magnitude * Math.cos(theta);
 	var dy = magnitude * Math.sin(theta);
-  
+	
 	if (p1.x < p2.x) {
 		dx = -dx;
 		dy = -dy;
