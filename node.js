@@ -21,6 +21,14 @@ Node.prototype.connect = function(node) {
 	this.adjacent.push(node);
 };
 
+Node.prototype.mass = function(node) {
+	this.node.children.length;
+};
+
+Node.prototype.getWeight = function(node) {
+	return 1 + (this.adjacent.length * 0.1);
+};
+
 /**
  * Recursive function for visiting a node and it's adjacent nodes.
  * 
@@ -57,10 +65,6 @@ Node.prototype.collapsed = function() {
 };
 
 Node.prototype.expand = function() {
-	for (ix in this.adjacent) {
-		this.adjacent[ix].x = this.x;
-		this.adjacent[ix].y = this.y;
-	}
 	this._collapsed = false;
 };
 
@@ -69,10 +73,6 @@ Node.prototype.expanded = function() {
 };
 
 Node.prototype.toggle = function() {
-	for (ix in this.adjacent) {
-		this.adjacent[ix].x = this.x + Math.random() * 10;
-		this.adjacent[ix].y = this.y + Math.random() * 10;
-	}
 	this._collapsed = ! this._collapsed;
 };
 

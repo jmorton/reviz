@@ -107,7 +107,7 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	if (node.isHidingChildren()) {
 		this.context.strokeStyle = Style.Node.collapse.strokeStyle;
 		this.context.lineWidth = Style.Node.collapse.lineWidth;
-    	this.context.arc(0, 0, this.nodeSize+4, 0, 2*Math.PI, false);
+    	this.context.arc(0, 0, (node.getWeight() * this.nodeSize) + 4, 0, 2*Math.PI, false);
     	this.context.stroke(0, 0, this.width, this.height);
     }
 	
@@ -120,7 +120,7 @@ DefaultRenderer.prototype.drawNode = function(node) {
 DefaultRenderer.prototype.drawPath = function(node) {
   with(this.context) {
     beginPath();
-    arc(0, 0, this.nodeSize, 0, Math.PI*2, false);
+    arc(0, 0, node.getWeight() * this.nodeSize, 0, Math.PI*2, false);
     closePath();
   }
 };
@@ -308,7 +308,7 @@ DefaultRenderer.prototype.isPointInNode = function(point, node) {
 	 */
 	var result;
 	
-	result = Graph.distance(point, node) < this.nodeSize;
+	result = Graph.distance(point, node) < (node.getWeight() * this.nodeSize);
 	
 	return result;
 };
