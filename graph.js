@@ -98,7 +98,9 @@ Graph.prototype.connect = function(parentNodeId) {
 		// simplified depth controls, two edges
 		// are formed.
 		parentNode.connect(childNode);
+		childNode.connect(parentNode);
 		this.edges.push([parentNode,childNode]);
+		this.edges.push([childNode,parentNode]);
 	}
 	
 	this.cacheReachableNodes();

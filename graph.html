@@ -81,9 +81,17 @@ g.connect('foo', 'bar', 'baz', 'grault', 'zork');
 g.connect('grault', 'qux','quux');
 g.connect('zork','smee','prosser','gru','phee','bor');
 g.cacheReachableNodes();
+g.nodes.foo.label = "Le Foo";
+g.connect('foo','a');
+g.connect('a','b');
+g.connect('b','c');
+g.connect('c','d');
+g.connect('d','e');
+g.connect('e','f');
+g.connect('f','a');
 g.applyLayout();
 g.applyDisplay();
-g.nodes.foo.label = "Le Foo";
+g.depth = 40;
 
 g.onNodeSelect(function (node) {
 	console.log(node.id);

@@ -27,9 +27,7 @@ function ForceDirectedLayout(graph) {
 // this refers to the display 
 ForceDirectedLayout.repel = function(attractor,n2) {
 	if ((this.dragged == attractor) ||
-		(this.selection == attractor) ||
-		(this.dragged == n2) ||
-		(this.selection == n2)) {
+		(this.selection == attractor)) {
 		return false;
 	}
 	attractor.add(repulsiveForce(attractor,n2));
@@ -70,11 +68,11 @@ ForceDirectedLayout.angle = function(p1, p2) {
 function springForce(p1, p2, spring, equilibrium) {
   
   if (spring == undefined) {
-    spring = 0.5;
+    spring = 0.7;
   }
   
   if (equilibrium == undefined) {
-    equilibrium = 120.0;
+    equilibrium = 100.0;
   }
   
   var magnitude = ForceDirectedLayout.distance(p1, p2);    
@@ -110,7 +108,7 @@ function springForce(p1, p2, spring, equilibrium) {
 function repulsiveForce(p1, p2, force) {
 	
 	if (force == undefined) {
-		force = 30.0;
+		force = 50.0;
 	}
 		
 	var magnitude = (force / ForceDirectedLayout.distance(p1,p2)) * 0.6;
