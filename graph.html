@@ -73,8 +73,10 @@ h2 {
 var g = new Graph('myGraph');
 g.add('foo');
 g.add('jon');
-g.connect('foo', 'bar', 'baz', 'grault', 'qux','quux','zork','smee','prosser','gru','phee','bor');
-
+g.connect('foo', 'bar', 'baz', 'grault', 'zork');
+g.connect('grault', 'qux','quux');
+g.connect('zork','smee','prosser','gru','phee','bor');
+g.cacheReachableNodes();
 g.applyLayout();
 g.applyDisplay();
 

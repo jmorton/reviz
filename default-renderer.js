@@ -53,17 +53,24 @@ DefaultRenderer.prototype.draw = function() {
 	// Move the canvas to wherever it has been dragged.
 	this.context.translate(this.offset.x, this.offset.y);
 	this.context.scale(this.scale, this.scale);
-		
-	for (index in this.graph.edges) {
-		this.drawEdge(
-			this.graph.edges[index][0],
-			this.graph.edges[index][1]);
+	
+	// Draw edges between reachable nodes
+	for (index in this.graph.reachable) {
+		var fromNode = this.graph.reachable[index];
+		for (i2 in fromNode.adjacent) {
+			var toNode = fromNode.adjacent[i2];
+			if (fromNode.reachable && toNode.reachable) {
+				this.drawEdge(fromNode,toNode);
+			}
+		}
 	}
 	
-	for (index in this.graph.nodes) {
+	// Draw reachable nodes
+	for (index in this.graph.reachable) {
 		this.drawNode(this.graph.nodes[index]);
 	}
 	
+	// Draw hovered nodes
 	if (this.hovered) {
 	  this.drawNode(this.hovered);
 	}
@@ -96,10 +103,10 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	this.context.stroke(0, 0, this.width, this.height);
 	this.context.fill();
 	
-	this.context.fillStyle = "rgba(0,0,0,0.9)";
+	this.context.fillStyle = Style.Node.fontColor;
 	this.context.textAlign = 'center';
 	this.context.textBaseline = 'middle';
-	this.context.fillText(node.id, 0, this.nodeSize/2-8);
+	this.context.fillText(node.id, 0, 0);
 
 	this.context.restore();
 };
@@ -152,7 +159,11 @@ DefaultRenderer.prototype.listen = function() {
 		} else {
 			renderer.hovering(event);
 		}
-		renderer.redraw();
+		// Only redraw if the graph is not playing.  Otherwise,
+		// performance will suffer during mouse over.
+		if (!renderer.graph.isPlaying()) {
+			renderer.redraw();
+		}
 	}, false);
 	
 	this.canvas.addEventListener('dblclick', function(event) {
@@ -233,9 +244,9 @@ DefaultRenderer.prototype.focus = function(event) {
 DefaultRenderer.prototype.containing = function(event) {
 	var relativePoint = this.relativePoint(event);
 	var nodes = [];
-	for (index in this.graph.nodes) {
-		if (this.isPointInNode(relativePoint, this.graph.nodes[index])) {
-			nodes[nodes.length] = this.graph.nodes[index];
+	for (index in this.graph.reachable) {
+		if (this.isPointInNode(relativePoint, this.graph.reachable[index])) {
+			nodes[nodes.length] = this.graph.reachable[index];
 		}
 	}
 	
@@ -294,6 +305,7 @@ var Style = {
   	stroke: 	  "rgba(55,55,55,0.9)",
   	lineWidth:    3,
   	font:         '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
+  	fontColor:    "rgba(0,0,0,0.9)",
   	drag : {
   		fill: 	  "rgba(225,225,225,0.9)",
   		stroke:   "rgba(128,128,128,0.9)"
