@@ -23,17 +23,23 @@ h2 {
 }
 </style>
 <script src="default-layout.js"></script>
+<script src="default-style.js"></script>
 <script src="default-renderer.js"></script>
 <script src="force-layout.js"></script>
 <script src="graph.js"></script>
 <script src="node.js"></script>
+
+<script>
+// Style.Scene.background = "rgb(255,255,255)";
+</script>
+
 </head>
 
 <body>
 
 <h1>Canvas Based Graph Visualization</h1>
 
-<canvas id="myGraph" width="600" height="400"></canvas>
+<canvas id="myGraph" width="800" height="400"></canvas>
 
 <div id="controls">
 <form>
@@ -68,9 +74,13 @@ var g = new Graph('myGraph');
 g.add('foo');
 g.add('jon');
 g.connect('foo', 'bar', 'baz', 'grault', 'qux','quux','zork','smee','prosser','gru','phee','bor');
-g.connect('jon','amy','tom','courtney','mom','dad');
-g.connect('jon','foo');
-g.connect('foo','jon')
+g.connect('jon','amy');
+g.connect('jon','baz')
+g.connect('amy','courtney');
+g.connect('courtney','tom');
+g.connect('tom','dad');
+g.connect('dad','mom');
+g.connect('mom','jon');
 g.applyLayout();
 g.applyDisplay();
 

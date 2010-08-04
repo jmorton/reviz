@@ -10,8 +10,8 @@ function DefaultRenderer(graph) {
 	this.height = 30;
 	this.scale = 1.0;
 	this.offset = { x: 0, y: 0 };
-	this.dragged = [];
-	this.hovered = [];
+	this.hovered = null;
+	this.dragged = null;
 	this.dragging = false;
 	this.listen();
 };
@@ -34,7 +34,9 @@ DefaultRenderer.prototype = {
  */
 DefaultRenderer.prototype.blank = function() {
 	this.context.save();
-	this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+  this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+	this.context.fillStyle = Style.Scene.background;
+	this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
 	this.context.restore();
 };
 
@@ -49,7 +51,7 @@ DefaultRenderer.prototype.draw = function() {
 	// Move the canvas to wherever it has been dragged.
 	this.context.translate(this.offset.x, this.offset.y);
 	this.context.scale(this.scale, this.scale);
-	
+		
 	for (index in this.graph.edges) {
 		this.drawEdge(
 			this.graph.edges[index][0],
@@ -60,6 +62,10 @@ DefaultRenderer.prototype.draw = function() {
 		this.drawNode(this.graph.nodes[index]);
 	}
 	
+	if (this.hovered) {
+	  this.drawNode(this.hovered)
+  }
+	
 	this.context.restore();
 
 	return this;
@@ -68,17 +74,18 @@ DefaultRenderer.prototype.draw = function() {
 DefaultRenderer.prototype.drawNode = function(node) {
 	this.context.save();
 	
-	this.context.fillStyle = Style.fill;
-	this.context.strokeStyle = Style.stroke;
-	this.context.fount = Style.font;
+	this.context.fillStyle = Style.Node.fill;
+	this.context.strokeStyle = Style.Node.stroke;
+	this.context.lineWidth = Style.Node.lineWidth;
+	this.context.font = Style.Node.font;
 	
-	if (this.dragged.indexOf(node) > -1) {
-		this.context.fillStyle = Style.drag.fill; 		
-		this.context.strokeStyle = Style.drag.stroke;
-	} else if ((this.hovered.indexOf(node) > -1)) {
-		this.context.fillStyle = Style.hover.fill;
-		this.context.strokeStyle = Style.hover.stroke;
-		this.context.font = Style.hover.font;
+	if (this.dragged == node) {
+		this.context.fillStyle = Style.Node.drag.fill;
+		this.context.strokeStyle = Style.Node.drag.stroke;
+	} else if (this.hovered == node) {
+		this.context.fillStyle = Style.Node.hover.fill;
+		this.context.strokeStyle = Style.Node.hover.stroke;
+		this.context.font = Style.Node.hover.font;
 	}
 	
 	
@@ -96,17 +103,19 @@ DefaultRenderer.prototype.drawNode = function(node) {
 };
 
 DefaultRenderer.prototype.drawPath = function(node) {
-	this.context.translate(node.x-this.width/2, node.y-this.height/2);
-	this.context.beginPath();
-	this.context.rect(0, 0, this.width, this.height);
-	this.context.closePath();
+  this.context.translate(node.x-this.width/2, node.y-this.height/2);
+  with(this.context) {
+    beginPath();
+    arc(this.width/2, this.height/2, this.height, 0, Math.PI*2, false);
+    closePath();
+  }
 };
 
 DefaultRenderer.prototype.drawEdge = function(node1, node2) {
 	this.context.save();
 	this.context.beginPath();
-	this.context.strokeStyle = Style.stroke;
-	this.context.lineWidth = 2;
+	this.context.strokeStyle = Style.Edge.stroke;
+	this.context.lineWidth = Style.Edge.lineWidth;
 	this.context.lineTo(node1.x, node1.y);
 	this.context.lineTo(node2.x, node2.y);
 	this.context.closePath();
@@ -133,7 +142,7 @@ DefaultRenderer.prototype.listen = function() {
 	
 	this.canvas.addEventListener('mousemove', function(event) {
 		if (renderer.dragging) {
-			if (renderer.dragged.length < 1) {
+			if (renderer.dragged == null) {
 				renderer.dragScene(event);
 			} else {
 				renderer.dragNode(event);
@@ -162,13 +171,13 @@ DefaultRenderer.prototype.listen = function() {
 DefaultRenderer.prototype.startDragging = function(e) {
 	this.lastPoint = e;
 	this.dragging  = true;
-	this.dragged   = this.containing(e);
+	this.dragged   = DefaultRenderer.topMost(this.containing(e));
 };
 
 DefaultRenderer.prototype.stopDragging = function(e) {
 	this.dragging  = false;
 	this.lastPoint = null;
-	this.dragged   = [];
+	this.dragged   = null;
 };
 
 DefaultRenderer.prototype.dragScene = function(e) {
@@ -180,16 +189,9 @@ DefaultRenderer.prototype.dragScene = function(e) {
 };
 
 DefaultRenderer.prototype.dragNode = function(e) {
-	for (index in this.dragged) {
-		this.dragged[index].x += (e.clientX - this.lastPoint.clientX) / this.scale;
-		this.dragged[index].y += (e.clientY - this.lastPoint.clientY) / this.scale;
-	}
+	this.dragged.x += (e.clientX - this.lastPoint.clientX) / this.scale;
+	this.dragged.y += (e.clientY - this.lastPoint.clientY) / this.scale;
 	this.lastPoint = e;
-};
-
-DefaultRenderer.prototype.dragging = function(e) {
-//	this.hovered = this.containing(e);
-	return true;
 };
 
 DefaultRenderer.prototype.hovering = function(e) {
@@ -199,7 +201,7 @@ DefaultRenderer.prototype.hovering = function(e) {
 	// of iterating over a list and setting a property, the list
 	// is destroyed/emptied.  If it makes more sense to iterate
 	// (and/or performant) then this approach should be changed.
-	this.hovered = this.containing(e);
+	this.hovered = DefaultRenderer.topMost(this.containing(e));
 };
 
 DefaultRenderer.prototype.zoom = function(e) {
@@ -254,17 +256,40 @@ DefaultRenderer.prototype.isPointInNode = function(point, node) {
 	return result;
 };
 
+DefaultRenderer.topMost = function(list) {
+  if ((list == undefined) || (list.length < 0)) {
+    return null;
+  } else {
+    return list[list.length-1];
+  }
+};
+
+
 var Style = {
-	fill:		"rgba(192,192,192,1.0)",
-	stroke: 	"rgba(225,225,225,0.7)",
-	font:       '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
-	drag : {
-		fill: 	"rgba(225,225,225,0.9)",
-		stroke: "rgba(128,128,128,0.9)"
+  
+  Scene : {
+    background: "rgb(112,112,112)"
+  },
+  
+  Node : {
+  	fill:		    "rgba(210,210,210,0.9)",
+  	stroke: 	  "rgba(55,55,55,0.9)",
+  	lineWidth:   3,
+  	font:       '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
+  	drag : {
+  		fill: 	  "rgba(225,225,225,0.9)",
+  		stroke:   "rgba(128,128,128,0.9)"
+  	},
+  	hover : {
+  		fill: 	 "rgba(225,225,225,0.9)",
+  		stroke:  "rgba(255,255,255,0.9)",
+  		font:    '800 14px/2 "Android Sans", "Lucida Grande", sans-serif'
+  	}
 	},
-	hover : {
-		fill: 	"rgba(225,225,225,0.9)",
-		stroke: "rgba(128,128,128,0.9)",
-		font:    '800 14px/2 "Android Sans", "Lucida Grande", sans-serif'
+	
+	Edge  : {
+	  lineWidth:  2,
+	  stroke:    "rgba(77,77,77,0.7)"
 	}
+	
 };

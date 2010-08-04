@@ -26,16 +26,16 @@ function ForceDirectedLayout(graph) {
 
 // this refers to the display 
 ForceDirectedLayout.repel = function(attractor,n2) {
-	if ((this.dragged.indexOf(attractor) >= 0) ||
-		(this.dragged.indexOf(n2) >= 0)) {
+	if ((this.dragged == attractor) ||
+		(this.dragged == n2)) {
 		return false;
 	}
-	attractor.add(repulsiveForce(attractor,n2), n2);
+	attractor.add(repulsiveForce(attractor,n2));
 };
 
 // this refers to the display. 
 ForceDirectedLayout.attract = function(attractor,attracted) {
-	if (this.dragged.indexOf(attracted) >= 0) {
+	if (this.dragged == attracted) {
 		return false;
 	}
 	attracted.add(springForce(attractor,attracted));
