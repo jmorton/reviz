@@ -6,6 +6,7 @@
  */
 function DefaultRenderer(graph) {
 	this.graph = graph;
+	this.foo = 'hi';
 	this.width = 100;
 	this.height = 30;
 	this.nodeSize = 20;
@@ -25,6 +26,18 @@ DefaultRenderer.prototype = {
 	},
 	get graph() {
 		return this._graph;
+	},
+	set selection(value) {
+		if (this._selected != undefined) {
+			this._selected.selected = false;
+		}
+		this._selected = value;
+		if (value != undefined) {
+			this._selected.selected = true;
+		}
+	},
+	get selection() {
+		return this._selected;
 	}
 };
 
@@ -88,7 +101,9 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	this.context.lineWidth = Style.Node.lineWidth;
 	this.context.font = Style.Node.font;
 	
-	if (this.dragged == node) {
+	if (this.selection == node) {
+		this.context.fillStyle = Style.Node.select.fill;
+	} else if (this.dragged == node) {
 		this.context.fillStyle = Style.Node.drag.fill;
 		this.context.strokeStyle = Style.Node.drag.stroke;
 	} else if (this.hovered == node) {
@@ -159,10 +174,14 @@ DefaultRenderer.prototype.listen = function() {
 	var renderer = this;
 	
 	this.canvas.addEventListener('mousedown', function(event) {
+		renderer.makeSelection(event);
 		renderer.startDragging(event);
 	}, false);
 	
 	this.canvas.addEventListener('mouseup', function(event) {
+		if (!renderer.dragging) {
+			renderer.makeSelection(event);
+		}
 		renderer.stopDragging(event);
 		renderer.redraw();
 	}, false);
@@ -220,6 +239,10 @@ DefaultRenderer.prototype.listen = function() {
 			}, false);
 		
 	}
+};
+
+DefaultRenderer.prototype.makeSelection = function(e) {
+	this.selection = DefaultRenderer.topMost(this.containing(e));
 };
 
 DefaultRenderer.prototype.startDragging = function(e) {
@@ -342,6 +365,9 @@ var Style = {
   		fill: 	 "rgba(225,225,225,0.9)",
   		stroke:  "rgba(255,255,255,0.9)",
   		font:    '800 14px/2 "Android Sans", "Lucida Grande", sans-serif'
+  	},
+  	select : {
+  		fill:	 "rgba(255,255,255,1.0)"
   	},
   	collapse : {
   		strokeStyle: "rgba(255,255,255,0.5)",

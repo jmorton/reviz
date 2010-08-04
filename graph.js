@@ -8,7 +8,7 @@ function Graph(canvasId) {
 	this.canvas = canvasId;
 	this.layout = new DefaultLayout(this);
 	this.display = new DefaultRenderer(this);
-	this.depth = 3;	
+	this.depth = 3;
 }
 
 Graph.prototype = {
