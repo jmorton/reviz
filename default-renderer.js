@@ -97,17 +97,19 @@ DefaultRenderer.prototype.drawNode = function(node) {
 		this.context.font = Style.Node.hover.font;
 	}
 	
-	
 	// Center the x/y of the node
 	this.drawPath(node);
 	this.context.stroke(0, 0, this.width, this.height);
 	this.context.fill();
 	
+	// Display text
+	if (this.scale > 0.6) {
 	this.context.fillStyle = Style.Node.fontColor;
 	this.context.textAlign = 'center';
 	this.context.textBaseline = 'middle';
 	this.context.fillText(node.id, 0, 0);
-
+	}
+	
 	this.context.restore();
 };
 
@@ -232,7 +234,7 @@ DefaultRenderer.prototype.hovering = function(e) {
 
 DefaultRenderer.prototype.zoom = function(delta) {
 	this.scale += 0.001 * delta;
-	this.scale = Math.max( this.scale, 0.5 );
+	this.scale = Math.max( this.scale, 0.25 );
 	this.scale = Math.min( this.scale, 5.0 );
 };
 
@@ -304,7 +306,7 @@ var Style = {
   	fill:		  "rgba(210,210,210,0.8)",
   	stroke: 	  "rgba(55,55,55,0.9)",
   	lineWidth:    3,
-  	font:         '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
+  	font:         '600 14px/2 "Android Sans", "Lucida Grande", sans-serif',
   	fontColor:    "rgba(0,0,0,0.9)",
   	drag : {
   		fill: 	  "rgba(225,225,225,0.9)",
