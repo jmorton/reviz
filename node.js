@@ -6,6 +6,12 @@ function Node(id, label) {
 	this.adjacent = [];
 }
 
+Node.prototype = {
+	get text() {
+		return this.label || this.id;
+	}
+};
+
 Node.prototype.add = function(force) {
 	this.x += force.x;
 	this.y += force.y;
@@ -33,7 +39,7 @@ Node.prototype.traverse = function(accumulator, limit, depth) {
 		} else {
 			this.depth = depth;
 		}
-		if (limit > 0) {
+		if (limit > 0 && true && this.expanded()) {
 			for (ix in this.adjacent) {
 				accumulator = this.adjacent[ix].traverse(accumulator, limit-1, depth+1);
 			}
@@ -41,3 +47,35 @@ Node.prototype.traverse = function(accumulator, limit, depth) {
 	}
 	return accumulator;
 };
+
+Node.prototype.collapse = function() {
+	this._collapsed = true;
+};
+
+Node.prototype.collapsed = function() {
+	return this._collapsed == true;
+};
+
+Node.prototype.expand = function() {
+	for (ix in this.adjacent) {
+		this.adjacent[ix].x = this.x;
+		this.adjacent[ix].y = this.y;
+	}
+	this._collapsed = false;
+};
+
+Node.prototype.expanded = function() {
+	return this._collapsed != true;
+};
+
+Node.prototype.toggle = function() {
+	for (ix in this.adjacent) {
+		this.adjacent[ix].x = this.x + Math.random() * 10;
+		this.adjacent[ix].y = this.y + Math.random() * 10;
+	}
+	this._collapsed = ! this._collapsed;
+};
+
+Node.prototype.isHidingChildren = function() {
+	return (this.collapsed() && (this.adjacent.length > 0));
+}

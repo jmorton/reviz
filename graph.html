@@ -79,6 +79,7 @@ g.connect('zork','smee','prosser','gru','phee','bor');
 g.cacheReachableNodes();
 g.applyLayout();
 g.applyDisplay();
+g.nodes.foo.label = "Le Foo";
 
 // Once the initial layout is done... switch to something fancy.
 g.layout = new ForceDirectedLayout(g);

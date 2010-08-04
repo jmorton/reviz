@@ -98,28 +98,44 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	}
 	
 	// Center the x/y of the node
+	this.context.translate(node.x, node.y);
+	
 	this.drawPath(node);
 	this.context.stroke(0, 0, this.width, this.height);
 	this.context.fill();
 	
-	// Display text
-	if (this.scale > 0.6) {
-	this.context.fillStyle = Style.Node.fontColor;
-	this.context.textAlign = 'center';
-	this.context.textBaseline = 'middle';
-	this.context.fillText(node.id, 0, 0);
-	}
+	if (node.isHidingChildren()) {
+		this.context.strokeStyle = Style.Node.collapse.strokeStyle;
+		this.context.lineWidth = Style.Node.collapse.lineWidth;
+    	this.context.arc(0, 0, this.nodeSize+4, 0, 2*Math.PI, false);
+    	this.context.stroke(0, 0, this.width, this.height);
+    }
+	
+	this.drawLabel(node);
 	
 	this.context.restore();
+	
 };
 
 DefaultRenderer.prototype.drawPath = function(node) {
-  this.context.translate(node.x, node.y);
   with(this.context) {
     beginPath();
     arc(0, 0, this.nodeSize, 0, Math.PI*2, false);
     closePath();
   }
+};
+
+DefaultRenderer.prototype.drawLabel = function(node) {
+	if (this.scale < 0.4) {
+		return false;
+	}
+	
+	with(this.context) {
+		fillStyle = Style.Node.fontColor;
+		textAlign = 'center';
+		textBaseline = 'middle';
+		fillText(node.text, 0, 0);
+	}
 };
 
 DefaultRenderer.prototype.drawEdge = function(node1, node2) {
@@ -169,10 +185,20 @@ DefaultRenderer.prototype.listen = function() {
 	}, false);
 	
 	this.canvas.addEventListener('dblclick', function(event) {
-		if (renderer.graph.isPlaying()) {
-			renderer.graph.stop();
+		var target = DefaultRenderer.topMost(renderer.containing(event));
+		
+		// Expand or collapse a node...
+		if (target != null) {
+			target.toggle();
+			renderer.graph.cacheReachableNodes();
+			
+		// Start/stop animation...
 		} else {
-			renderer.graph.start();
+			if (renderer.graph.isPlaying()) {
+				renderer.graph.stop();
+			} else {
+				renderer.graph.start();
+			}			
 		}
 	}, false);
 	
@@ -316,8 +342,12 @@ var Style = {
   		fill: 	 "rgba(225,225,225,0.9)",
   		stroke:  "rgba(255,255,255,0.9)",
   		font:    '800 14px/2 "Android Sans", "Lucida Grande", sans-serif'
+  	},
+  	collapse : {
+  		strokeStyle: "rgba(255,255,255,0.5)",
+  		lineWidth: 1
   	}
-	},
+  },
 	
 	Edge  : {
 	  lineWidth:  2,

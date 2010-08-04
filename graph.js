@@ -8,7 +8,7 @@ function Graph(canvasId) {
 	this.canvas = canvasId;
 	this.layout = new DefaultLayout(this);
 	this.display = new DefaultRenderer(this);
-	this.depth = 1;	
+	this.depth = 3;	
 }
 
 Graph.prototype = {
@@ -35,6 +35,7 @@ Graph.prototype = {
 	set depth(value) {
 		this._depth = value;
 		this.cacheReachableNodes();
+		this.applyDisplay();
 	},
 	get depth() {
 		return this._depth;
@@ -96,9 +97,7 @@ Graph.prototype.connect = function(parentNodeId) {
 		// simplified depth controls, two edges
 		// are formed.
 		parentNode.connect(childNode);
-		childNode.connect(parentNode);
 		this.edges.push([parentNode,childNode]);
-		this.edges.push([childNode,parentNode]);
 	}
 	
 	this.cacheReachableNodes();
