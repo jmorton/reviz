@@ -162,11 +162,25 @@ DefaultRenderer.prototype.listen = function() {
 			renderer.graph.start();
 		}
 	}, false);
-	/*
-	 * this.canvas.addEventListener('mousewheel', function(event) {
-	 * renderer.zoom(event); renderer.redraw(); });
-	 */
-
+	
+	// Mozilla handles mouse events differently than webkit.
+	if (window.addEventListener) {
+		
+		this.canvas.addEventListener('DOMMouseScroll', 
+			function(event) {
+				var delta = event.detail * 10;
+				renderer.zoom(delta);
+				renderer.redraw();
+		}, false);
+		
+		this.canvas.addEventListener('mousewheel',
+			function() {
+				var delta = event.wheelDelta;
+				renderer.zoom(delta);
+				renderer.redraw();
+			}, false);
+		
+	}
 };
 
 DefaultRenderer.prototype.startDragging = function(e) {
@@ -205,8 +219,8 @@ DefaultRenderer.prototype.hovering = function(e) {
 	this.hovered = DefaultRenderer.topMost(this.containing(e));
 };
 
-DefaultRenderer.prototype.zoom = function(e) {
-	this.scale += 0.001 * e.wheelDelta;
+DefaultRenderer.prototype.zoom = function(delta) {
+	this.scale += 0.001 * delta;
 	this.scale = Math.max( this.scale, 0.5 );
 	this.scale = Math.min( this.scale, 5.0 );
 };
