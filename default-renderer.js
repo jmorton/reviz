@@ -28,12 +28,18 @@ DefaultRenderer.prototype = {
 		return this._graph;
 	},
 	set selection(value) {
+		// Don't handle the selection unless what is selected
+		// is actually a new value.
+		if (this._selected == value) {
+			return;
+		}
 		if (this._selected != undefined) {
 			this._selected.selected = false;
 		}
 		this._selected = value;
 		if (value != undefined) {
 			this._selected.selected = true;
+			this.graph.handleEvent('select', this._selected);
 		}
 	},
 	get selection() {
@@ -174,15 +180,14 @@ DefaultRenderer.prototype.listen = function() {
 	var renderer = this;
 	
 	this.canvas.addEventListener('mousedown', function(event) {
-		renderer.makeSelection(event);
 		renderer.startDragging(event);
 	}, false);
 	
 	this.canvas.addEventListener('mouseup', function(event) {
-		if (!renderer.dragging) {
+		renderer.stopDragging(event);
+		if (renderer.dragging != true) {
 			renderer.makeSelection(event);
 		}
-		renderer.stopDragging(event);
 		renderer.redraw();
 	}, false);
 	

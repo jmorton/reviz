@@ -9,6 +9,7 @@ function Graph(canvasId) {
 	this.layout = new DefaultLayout(this);
 	this.display = new DefaultRenderer(this);
 	this.depth = 3;
+	this.callbacks = {};
 }
 
 Graph.prototype = {
@@ -190,6 +191,15 @@ Graph.prototype.cacheReachableNodes = function() {
 	return this.reachable;
 };
 
+Graph.prototype.handleEvent = function(type, source) {
+	if (this.callbacks[type]) {
+		this.callbacks[type].call(this, source);
+	}
+};
+
+Graph.prototype.onNodeSelect = function(callback) {
+	this.callbacks['select'] = callback;
+};
 
 /**
  * Utility function for calculating the magnitude between two

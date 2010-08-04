@@ -27,7 +27,9 @@ function ForceDirectedLayout(graph) {
 // this refers to the display 
 ForceDirectedLayout.repel = function(attractor,n2) {
 	if ((this.dragged == attractor) ||
-		(this.dragged == n2)) {
+		(this.selection == attractor) ||
+		(this.dragged == n2) ||
+		(this.selection == n2)) {
 		return false;
 	}
 	attractor.add(repulsiveForce(attractor,n2));
@@ -35,7 +37,7 @@ ForceDirectedLayout.repel = function(attractor,n2) {
 
 // this refers to the display. 
 ForceDirectedLayout.attract = function(attractor,attracted) {
-	if (this.dragged == attracted) {
+	if ((this.dragged == attracted) || (this.selection == attracted)) {
 		return false;
 	}
 	attracted.add(springForce(attractor,attracted));

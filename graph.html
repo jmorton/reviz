@@ -21,6 +21,8 @@ h2 {
 #forceChoices, #controls {
 	display: none;
 }
+.done {
+}
 </style>
 <script src="default-layout.js"></script>
 <script src="default-style.js"></script>
@@ -60,13 +62,14 @@ h2 {
 
 <h2>Basic Controls</h2>
 <ul class="tips">
-<li>Double click the graph drawing area to start/stop automatic layout.</li> 
-<li>Use your mousewheel to zoom in and out</li>
-<li>Click and drag a node to move it, this will also make it temporarily immune to layout forces.</li>
-<li>Click and drag the background to pan</li>
-<li>Double click a node to show/hide it's children.</li> 
-<li>TODO: One node selected at a time.</li> 
-<li>TODO: Fetch leaf data (realtime fetch of data for nodes without children)</li>
+<li class="done">Double click the graph drawing area to start/stop automatic layout.</li> 
+<li class="done">Use your mousewheel to zoom in and out</li>
+<li class="done">Click and drag a node to move it, this will also make it temporarily immune to layout forces.</li>
+<li class="done">Click and drag the background to pan</li>
+<li class="done">Double click a node to show/hide it's children.</li> 
+<li class="done">One node selected at a time.</li> 
+<li class="done">Detect node selection event.</li>
+<li>TODO: Detect edge selection event.</li>
 </ul>
 
 <script><!--
@@ -81,6 +84,14 @@ g.cacheReachableNodes();
 g.applyLayout();
 g.applyDisplay();
 g.nodes.foo.label = "Le Foo";
+
+g.onNodeSelect(function (node) {
+	console.log(node.id);
+});
+
+g.onNodeHovered = function (node) {
+	console.log(node);
+}
 
 // Once the initial layout is done... switch to something fancy.
 g.layout = new ForceDirectedLayout(g);
