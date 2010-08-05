@@ -8,7 +8,7 @@ function DefaultRenderer(graph) {
   
   // The renderer needs to be able to reference the graph
   // so that it can access node data.
-	this.graph = graph;
+	this.setGraph(graph);
 	
 	// A default node size (radius) used for drawing nodes.
 	this.nodeSize = 20;
@@ -20,7 +20,7 @@ function DefaultRenderer(graph) {
 	this.offset = { x: 0, y: 0 };
 	
 	// The node that the cursor is over
-	this.hovered = null;
+	this.setHovered(null);
 	
 	// The node that is being dragged
 	this.dragged = null;
@@ -33,49 +33,49 @@ function DefaultRenderer(graph) {
 };
 
 DefaultRenderer.prototype = {
-	set graph(value) {
-		this._graph = value;
+	setGraph: function(value) {
+		this.graph = value;
 		this.canvas = value.canvas;
 		this.context = value.canvas.getContext('2d');
 	},
-	get graph() {
-		return this._graph;
+	getGraph: function() {
+		return this.graph;
 	},
-	set selection(value) {
+	setSelection: function(value) {
 		// Don't handle the selection unless what is selected
 		// is actually a new value.
-		if (this._selected == value) {
+		if (this.selection == value) {
 			return;
 		}
-		if (this._selected != undefined) {
-			this._selected.selected = false;
+		if (this.selection != undefined) {
+			this.selection.selected = false;
 		}
-		this._selected = value;
+		this.selection = value;
 		if (value != undefined) {
-			this._selected.selected = true;
-			this.graph.handleEvent('select', this._selected);
+			this.selection.selected = true;
+			this.graph.handleEvent('select', this.selection);
 		}
 	},
-	get selection() {
-		return this._selected;
+	getSelection: function() {
+		return this.selection;
 	},
-	set hovered(value) {
+	setHovered: function(value) {
 		// Don't handle the selection unless what is selected
 		// is actually a new value.
-		if (this._hovered == value) {
+		if (this.hovered == value) {
 			return;
 		}
-		if (this._hovered != undefined) {
-			this._hovered.hovered = false;
+		if (this.hovered != undefined) {
+			this.hovered.hovered = false;
 		}
-		this._hovered = value;
+		this.hovered = value;
 		if (value != undefined) {
-			this._hovered.hovered = true;
-			this.graph.handleEvent('select', this._hovered);
+			this.hovered.hovered = true;
+			this.graph.handleEvent('select', this.hovered);
 		}
 	},
-	get hovered() {
-		return this._hovered;
+	getHovered: function() {
+		return this.hovered;
 	}
 };
 
@@ -213,7 +213,7 @@ DefaultRenderer.prototype.drawLabel = function(node) {
     // shadowColor = 'rgba(255,255,255,1.0)';
 		textAlign = 'center';
 		textBaseline = 'middle';
-		fillText(node.text, 0, 0);
+		fillText(node.label || node.id, 0, 0);
 	}
 };
 
@@ -330,7 +330,7 @@ DefaultRenderer.prototype.listen = function() {
  * @param e
  */
 DefaultRenderer.prototype.makeSelection = function(e) {
-	this.selection = DefaultRenderer.topMost(this.containing(e));
+	this.setSelection(DefaultRenderer.topMost(this.containing(e)));
 };
 
 /**
@@ -395,7 +395,7 @@ DefaultRenderer.prototype.hovering = function(e) {
 	// of iterating over a list and setting a property, the list
 	// is destroyed/emptied. If it makes more sense to iterate
 	// (and/or performant) then this approach should be changed.
-	this.hovered = DefaultRenderer.topMost(this.containing(e));
+	this.setHovered(DefaultRenderer.topMost(this.containing(e)));
 };
 
 /**

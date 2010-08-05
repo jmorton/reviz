@@ -136,13 +136,13 @@ function updateLayout() {
   var selectedLayout = document.getElementById('layout').value;
   switch (selectedLayout) {
     case 'force-layout' :
-      g.layout = new ForceDirectedLayout(g);
+      g.setLayout(new ForceDirectedLayout(g));
       break;
     case 'circular-layout' :
-      g.layout = new CircularLayout(g);
+      g.setLayout(new CircularLayout(g));
       break;
     default :
-      g.layout = new DefaultLayout(g);
+      g.setLayout(new DefaultLayout(g));
       break;
   }
   if (!g.display.selection) {

@@ -5,39 +5,39 @@
 function Graph(canvasId) {
 	this.nodes = {};
 	this.edges = [];
-	this.canvas = canvasId;
-	this.layout = new DefaultLayout(this);
-	this.display = new DefaultRenderer(this);
-	this.depth = -1;
+	this.setCanvas(canvasId);
+	this.setLayout(new DefaultLayout(this));
+	this.setDisplay(new DefaultRenderer(this));
+	this.setDepth(-1);
 	this.callbacks = {};
 }
 
 Graph.prototype = {
-	set canvas(id) {
-		this._canvas = document.getElementById(id);
+	setCanvas: function(id) {
+		this.canvas = document.getElementById(id);
 	},
-	get canvas() {
-		return this._canvas;
+	getCanvas: function() {
+		return this.canvas;
 	},
-	set layout(value) {
+	setLayout: function(value) {
 		this.layoutWith = value;
 		this.layoutWith.graph = this;
 	},
-	get layout() {
+	getLayout: function() {
 		return this.layoutWith;
 	},
-	set display(value) {
-		this.displayWith = value;
-		this.displayWith.graph = this;
+	setDisplay: function(value) {
+		this.display = value;
+		this.display.graph = this;
 	},
-	get display() {
-		return this.displayWith;
+	getDisplay: function() {
+		return this.display;
 	},
-	set depth(value) {
+	setDepth: function(value) {
 		this._depth = value;
 		this.cacheReachableNodes();
 	},
-	get depth() {
+	getDepth: function() {
 		return this._depth;
 	}
 };
@@ -114,7 +114,7 @@ Graph.prototype.nodeCount = function() {
 };
 
 Graph.prototype.applyDisplay = function() {
-	return this.displayWith.redraw();
+	return this.display.redraw();
 };
 
 Graph.prototype.applyLayout = function() {
@@ -158,7 +158,7 @@ Graph.prototype.eachPair = function(curry) {
 		for (i2 in this.reachable) {
 			node2 = this.reachable[i2];
 			if (node1 != node2) {
-				curry.call(this.displayWith, node1, node2);
+				curry.call(this.display, node1, node2);
 			}
 		}
 	}
@@ -169,7 +169,7 @@ Graph.prototype.eachEdge = function(curry) {
 	var pair;
 	for (index in this.edges) {
 		pair = this.edges[index];
-		curry.call(this.displayWith, pair[0], pair[1]);
+		curry.call(this.display, pair[0], pair[1]);
 	}
 	return true;
 };

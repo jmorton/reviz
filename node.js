@@ -6,12 +6,6 @@ function Node(id, label) {
 	this.adjacent = [];
 }
 
-Node.prototype = {
-	get text() {
-		return this.label || this.id;
-	}
-};
-
 Node.prototype.add = function(force) {
 	this.x += force.x;
 	this.y += force.y;
