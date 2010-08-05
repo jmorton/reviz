@@ -1,20 +1,34 @@
 /**
  * Component for abstracting the rendering of the graph.
- * 
- * @param id
- * @returns {DefaultGraphDrawer}
+ *
+ * @param graph
+ * @returns {DefaultRenderer}
  */
 function DefaultRenderer(graph) {
+  
+  // The renderer needs to be able to reference the graph
+  // so that it can access node data.
 	this.graph = graph;
-	this.foo = 'hi';
-	this.width = 100;
-	this.height = 30;
+	
+	// A default node size (radius) used for drawing nodes.
 	this.nodeSize = 20;
+	
+	// Scale is used to keep track of zoom-in and zoom-out
 	this.scale = 1.0;
+	
+	// Offset is used to keep track of panning
 	this.offset = { x: 0, y: 0 };
+	
+	// The node that the cursor is over
 	this.hovered = null;
+	
+	// The node that is being dragged
 	this.dragged = null;
+	
+	// Keep track of whether or not dragging is currently happening
 	this.dragging = false;
+	
+	// Setup mouse (and eventually other) listeners/handlers
 	this.listen();
 };
 
@@ -48,7 +62,7 @@ DefaultRenderer.prototype = {
 };
 
 /**
- * Clears the viewing area.
+ * Clears the viewing area and sets it to the scene background color.
  * 
  * @returns
  */
@@ -99,6 +113,11 @@ DefaultRenderer.prototype.draw = function() {
 	return this;
 };
 
+/**
+ * Draws the node and label.
+ *
+ * @param node
+ */
 DefaultRenderer.prototype.drawNode = function(node) {
 	this.context.save();
 	
@@ -138,6 +157,11 @@ DefaultRenderer.prototype.drawNode = function(node) {
 	
 };
 
+/**
+ * Creates the path without actually filling it in or adding an outline.
+ *
+ * @param node
+ */
 DefaultRenderer.prototype.drawPath = function(node) {
   with(this.context) {
     beginPath();
@@ -146,6 +170,11 @@ DefaultRenderer.prototype.drawPath = function(node) {
   }
 };
 
+/**
+ * Creates a label for the node.
+ *
+ * @param node
+ */
 DefaultRenderer.prototype.drawLabel = function(node) {
 	if (this.scale < 0.4) {
 		return false;
@@ -159,6 +188,12 @@ DefaultRenderer.prototype.drawLabel = function(node) {
 	}
 };
 
+/**
+ * Creates a line between two nodes.
+ *
+ * @param node1
+ * @param node2
+ */
 DefaultRenderer.prototype.drawEdge = function(node1, node2) {
 	this.context.save();
 	this.context.beginPath();
@@ -171,11 +206,17 @@ DefaultRenderer.prototype.drawEdge = function(node1, node2) {
 	this.context.restore();
 };
 
+/**
+ * Clear the viewing area and draw nodes, edges, and labels.
+ */
 DefaultRenderer.prototype.redraw = function() {
 	this.blank();
 	this.draw();
 };
 
+/**
+ * Create and register mouse event handlers.
+ */
 DefaultRenderer.prototype.listen = function() {
 	var renderer = this;
 	
@@ -246,22 +287,41 @@ DefaultRenderer.prototype.listen = function() {
 	}
 };
 
+/**
+ * Determine the "top most" node and make it the current selection.
+ *
+ * @param e
+ */
 DefaultRenderer.prototype.makeSelection = function(e) {
 	this.selection = DefaultRenderer.topMost(this.containing(e));
 };
 
+/**
+ * Determine the "top most" node and make it the node being dragged.
+ *
+ * @param e
+ */
 DefaultRenderer.prototype.startDragging = function(e) {
 	this.lastPoint = e;
 	this.dragging  = true;
 	this.dragged   = DefaultRenderer.topMost(this.containing(e));
 };
 
+/**
+ * Release the node being dragged.
+ * @param e
+ */
 DefaultRenderer.prototype.stopDragging = function(e) {
 	this.dragging  = false;
 	this.lastPoint = null;
 	this.dragged   = null;
 };
 
+/**
+ * Pan the scene without actually moving any nodes.
+ *
+ * @param e
+ */
 DefaultRenderer.prototype.dragScene = function(e) {
 	if (this.lastPoint != undefined) {
 		this.offset.x += (e.clientX - this.lastPoint.clientX);
@@ -270,12 +330,23 @@ DefaultRenderer.prototype.dragScene = function(e) {
 	this.lastPoint = e;
 };
 
+/**
+ * Move nodes within the scene.
+ *
+ * @param e
+ */
 DefaultRenderer.prototype.dragNode = function(e) {
 	this.dragged.x += (e.clientX - this.lastPoint.clientX) / this.scale;
 	this.dragged.y += (e.clientY - this.lastPoint.clientY) / this.scale;
 	this.lastPoint = e;
 };
 
+/**
+ * Determine the "top most" node being hovered so that it can be
+ * highlighted during drawing.
+ *
+ * @param e
+ */
 DefaultRenderer.prototype.hovering = function(e) {
 	// I've decided to use a separate list so that we don't have
 	// to iterate over all nodes in order to get a subset of them.
@@ -286,6 +357,12 @@ DefaultRenderer.prototype.hovering = function(e) {
 	this.hovered = DefaultRenderer.topMost(this.containing(e));
 };
 
+/**
+ * Zoom in or out a linear amount relative to the delta.  This is capped
+ * by a zoom factor of 1/4 up to 5x.
+ *
+ * @param delta
+ */
 DefaultRenderer.prototype.zoom = function(delta) {
 	this.scale += 0.001 * delta;
 	this.scale = Math.max( this.scale, 0.25 );
@@ -297,6 +374,11 @@ DefaultRenderer.prototype.focus = function(event) {
 	return true;
 };
 
+/**
+ * Find all of the nodes that contain the point contained by the event.
+ *
+ * @param event
+ */
 DefaultRenderer.prototype.containing = function(event) {
 	var relativePoint = this.relativePoint(event);
 	var nodes = [];
@@ -327,6 +409,9 @@ DefaultRenderer.prototype.relativePoint = function(event) {
  * Create the node path and determine if it actually contains the specified
  * point. The renderer should handle this because the node doesn't know how to
  * draw itself.
+ *
+ * @param point
+ * @param node
  */
 DefaultRenderer.prototype.isPointInNode = function(point, node) {
 	/*
@@ -341,6 +426,14 @@ DefaultRenderer.prototype.isPointInNode = function(point, node) {
 	return result;
 };
 
+/**
+ * Get the "top most" node in a list.  Right now, this is just the last
+ * node because of the way drawing and containment occurs.  The #containing
+ * function iterates over all the reachable nodes in order.  If this
+ * changes, then topMost will need to be reworked.
+ *
+ * @param list
+ */
 DefaultRenderer.topMost = function(list) {
   if ((list == undefined) || (list.length < 0)) {
     return null;
