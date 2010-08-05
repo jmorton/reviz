@@ -6,13 +6,23 @@
  */
 function DefaultLayout(graph) {
 	this.graph = graph;
+	this.width = 10;
 }
 
 DefaultLayout.prototype.layout = function() {
-	var p = 10;
-	for (ix in this.graph.nodes) {
-		this.graph.nodes[ix].x = p*10;
-		this.graph.nodes[ix].y = p*10;
-		p += 1;
+	var increment = this.graph.display.nodeSize * 2.5;
+	var wrapAt = increment * this.width;
+	var row = 0;
+	var col = 0;
+	
+	for (ix in this.graph.reachable) {
+		this.graph.reachable[ix].x = col;
+		this.graph.reachable[ix].y = row;
+		col += increment;
+		if (col > wrapAt) {
+		  row += increment;
+		  col  = 0;
+		}
 	}
+	
 };

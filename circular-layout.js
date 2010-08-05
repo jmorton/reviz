@@ -14,10 +14,12 @@ CircularLayout.prototype.layout = function() {
   // layout all nodes in a circular fashion
   var radius = 250;
   var step = 0;
-  var increment = ( (Math.PI*2) / (this.graph.nodeCount() ) );
   
-  if (this.graph.display.selection != null) {
-    increment -= 1;
+  // If a node is selected, room needs to be made for N-1 nodes.
+  if (this.graph.display.selection == null) {
+    var increment = ( (Math.PI*2) / (this.graph.nodeCount() ) );
+  } else {
+    var increment = ( (Math.PI*2) / (this.graph.nodeCount() - 1) );
   }
   
   var theta;

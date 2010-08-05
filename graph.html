@@ -18,8 +18,8 @@ h2 {
 #myGraph {
 	border: 1px solid #ccc;
 }
-#forceChoices, #controls {
-	display: none;
+#forceLayoutParameters {
+  display: none;
 }
 .done {
 }
@@ -45,19 +45,27 @@ Style.Scene.background = "040507";
 <canvas id="myGraph" width="940" height="600"></canvas>
 
 <div id="controls">
+
 <form>
-<label for="layout">Layout</label>
-<select id="layout" name="layout">
-<option value="default">Default</option>
-<option value="force-layout">Force Directed</option>
-</select>
-<fieldset id="forceChoices">
-<input id="repulsiveForce">
-<input id="attractiveForce">
-<input id="attractiveEquilibrium">
-<input id="maximumChildren">
-<input id="maximumAncestors">
-</fieldset>
+  <ul>
+    <li>
+      <label for="layout">Layout</label>
+      <select id="layout" name="layout" onchange="updateLayout()">
+      <option value="default">Default</option>
+      <option value="force-layout">Force Directed</option>
+      <option value="circular-layout">Circular</option>
+      </select>
+    </li>
+    <li>
+      <fieldset id="forceLayoutParameters">
+      <input id="repulsiveForce">
+      <input id="attractiveForce">
+      <input id="attractiveEquilibrium">
+      <input id="maximumChildren">
+      <input id="maximumAncestors">
+      </fieldset>
+    </li>
+  </ul>
 </form>
 </div>
 
@@ -77,12 +85,9 @@ Style.Scene.background = "040507";
 
 var g = new Graph('myGraph');
 g.add('foo');
-g.add('jon');
 g.connect('foo', 'bar', 'baz', 'grault','zork');
 g.connect('grault', 'qux','quux');
 g.connect('zork','smee','prosser','gru','phee','bor');
-// g.cacheReachableNodes();
-// g.nodes.foo.label = "Le Foo";
 g.connect('foo','a');
 g.connect('a','b');
 g.connect('b','c');
@@ -103,6 +108,7 @@ g.connect('i','n');
 g.connect('foo','g');
 g.connect('phee','n');
 g.connect('phee','m');
+g.applyLayout();
 
 g.onNodeSelect(function (node) {
 	console.log(node.id);
@@ -113,11 +119,26 @@ g.onNodeHovered = function (node) {
 }
 
 // Once the initial layout is done... switch to something fancy.
-g.layout = new ForceDirectedLayout(g);
-// g.layout = new CircularLayout(g);
-g.display.selection = g.nodes.foo;
-g.applyLayout();
-g.applyDisplay();
+g.layout = new DefaultLayout(g);
+
+function updateLayout() {
+  g.stop();
+  var selectedLayout = document.getElementById('layout').value;
+  switch (selectedLayout) {
+    case 'force-layout' :
+      g.layout = new ForceDirectedLayout(g);
+      g.start();
+      break;
+    case 'circular-layout' :
+      g.layout = new CircularLayout(g);
+      break;
+    default :
+      g.layout = new DefaultLayout(g);
+      break;
+  }
+  g.applyLayout();
+  g.applyDisplay();
+}
 
 --></script>
 </body>
