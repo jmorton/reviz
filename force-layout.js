@@ -82,7 +82,7 @@ function springForce(p1, p2, spring, equilibrium) {
     return { x:0, y:0 };
   }
   
-  var delta = - (equilibrium - magnitude) * spring * 0.6;
+  var delta = - (equilibrium - magnitude) * spring;
   
   var dx = delta * Math.cos(theta);
   var dy = delta * Math.sin(theta);

@@ -25,9 +25,9 @@ h2 {
 }
 </style>
 <script src="default-layout.js"></script>
-<script src="default-style.js"></script>
 <script src="default-renderer.js"></script>
 <script src="force-layout.js"></script>
+<script src="circular-layout.js"></script>
 <script src="graph.js"></script>
 <script src="node.js"></script>
 
@@ -78,31 +78,31 @@ Style.Scene.background = "040507";
 var g = new Graph('myGraph');
 g.add('foo');
 g.add('jon');
-g.connect('foo', 'bar', 'baz', 'grault', 'zork');
+g.connect('foo', 'bar', 'baz', 'grault','zork');
 g.connect('grault', 'qux','quux');
 g.connect('zork','smee','prosser','gru','phee','bor');
-g.cacheReachableNodes();
-g.nodes.foo.label = "Le Foo";
-g.connect('foo','a');
-g.connect('a','b');
-g.connect('b','c');
-g.connect('c','d');
-g.connect('d','e');
-g.connect('e','f');
-g.connect('f','g');
-g.connect('g','h');
-g.connect('h','i');
-g.connect('i','j');
-g.connect('j','k');
-g.connect('k','l');
-g.connect('l','m');
-g.connect('f','n');
-g.connect('g','n');
-g.connect('h','n');
-g.connect('i','n');
-g.connect('foo','g');
-g.connect('phee','n');
-g.connect('phee','m');
+// g.cacheReachableNodes();
+// g.nodes.foo.label = "Le Foo";
+// g.connect('foo','a');
+// g.connect('a','b');
+// g.connect('b','c');
+// g.connect('c','d');
+// g.connect('d','e');
+// g.connect('e','f');
+// g.connect('f','g');
+// g.connect('g','h');
+// g.connect('h','i');
+// g.connect('i','j');
+// g.connect('j','k');
+// g.connect('k','l');
+// g.connect('l','m');
+// g.connect('f','n');
+// g.connect('g','n');
+// g.connect('h','n');
+// g.connect('i','n');
+// g.connect('foo','g');
+// g.connect('phee','n');
+// g.connect('phee','m');
 
 g.applyLayout();
 g.applyDisplay();
@@ -117,7 +117,10 @@ g.onNodeHovered = function (node) {
 }
 
 // Once the initial layout is done... switch to something fancy.
-g.layout = new ForceDirectedLayout(g);
+// g.layout = new ForceDirectedLayout(g);
+g.layout = new CircularLayout(g);
+g.applyLayout();
+g.applyDisplay();
 
 --></script>
 </body>

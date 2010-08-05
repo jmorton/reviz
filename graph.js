@@ -108,6 +108,12 @@ Graph.prototype.connect = function(parentNodeId) {
 	return this;
 };
 
+Graph.prototype.nodeCount = function() {
+  var count = 0;
+  for (key in this.nodes) if (this.nodes.hasOwnProperty(key)) count++;
+  return count;
+};
+
 Graph.prototype.applyDisplay = function() {
 	return this.displayWith.redraw();
 };
