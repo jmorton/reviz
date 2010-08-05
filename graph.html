@@ -51,7 +51,7 @@ Style.Scene.background = "040507";
     <li>
       <label for="layout">Layout</label>
       <select id="layout" name="layout" onchange="updateLayout()">
-      <option value="default">Default</option>
+      <option value="default">Tile Based</option>
       <option value="force-layout">Force Directed</option>
       <option value="circular-layout">Circular</option>
       </select>
@@ -108,6 +108,7 @@ g.connect('i','n');
 g.connect('foo','g');
 g.connect('phee','n');
 g.connect('phee','m');
+g.display.lookAt(g.nodes.foo);
 g.applyLayout();
 
 g.onNodeSelect(function (node) {
@@ -127,7 +128,6 @@ function updateLayout() {
   switch (selectedLayout) {
     case 'force-layout' :
       g.layout = new ForceDirectedLayout(g);
-      g.start();
       break;
     case 'circular-layout' :
       g.layout = new CircularLayout(g);
@@ -136,8 +136,11 @@ function updateLayout() {
       g.layout = new DefaultLayout(g);
       break;
   }
-  g.applyLayout();
-  g.applyDisplay();
+  if (!g.display.selection) {
+    g.display.selection = g.nodes.foo;
+  }
+  g.display.lookAt(g.nodes.foo);
+  g.start();
 }
 
 --></script>

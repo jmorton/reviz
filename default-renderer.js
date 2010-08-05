@@ -262,10 +262,10 @@ DefaultRenderer.prototype.listen = function() {
 	}, false);
 	
 	this.canvas.addEventListener('mouseup', function(event) {
-		renderer.stopDragging(event);
-		if (renderer.dragging != true) {
+		if (renderer.noDragDetected) {
 			renderer.makeSelection(event);
 		}
+		renderer.stopDragging(event);
 		renderer.redraw();
 	}, false);
 	
@@ -342,6 +342,7 @@ DefaultRenderer.prototype.startDragging = function(e) {
 	this.lastPoint = e;
 	this.dragging  = true;
 	this.dragged   = DefaultRenderer.topMost(this.containing(e));
+	this.noDragDetected = true;
 };
 
 /**
@@ -350,6 +351,7 @@ DefaultRenderer.prototype.startDragging = function(e) {
  */
 DefaultRenderer.prototype.stopDragging = function(e) {
 	this.dragging  = false;
+	this.actuallyDragged = false;
 	this.lastPoint = null;
 	this.dragged   = null;
 };
@@ -365,6 +367,7 @@ DefaultRenderer.prototype.dragScene = function(e) {
 		this.offset.y += (e.clientY - this.lastPoint.clientY);
 	}
 	this.lastPoint = e;
+	this.noDragDetected = false;
 };
 
 /**
@@ -376,6 +379,7 @@ DefaultRenderer.prototype.dragNode = function(e) {
 	this.dragged.x += (e.clientX - this.lastPoint.clientX) / this.scale;
 	this.dragged.y += (e.clientY - this.lastPoint.clientY) / this.scale;
 	this.lastPoint = e;
+	this.noDragDetected = false;
 };
 
 /**
@@ -453,9 +457,21 @@ DefaultRenderer.prototype.isPointInNode = function(point, node) {
 	 */
 	var result;
 	
-	result = Graph.distance(point, node) < (node.getWeight() * this.nodeSize);
+	result = Graph.distance(point, node) < (this.nodeSize);
 	
 	return result;
+};
+
+/**
+ * Place the center of the specified point in the scene at the center
+ * of the viewing area.
+ */
+DefaultRenderer.prototype.lookAt = function(point) {
+  var centerX = this.context.canvas.width / 2;
+  var centerY = this.context.canvas.height / 2;
+  this.offset.x = (centerX - point.x);
+  this.offset.y = (centerY - point.y);
+  this.redraw();
 };
 
 /**
