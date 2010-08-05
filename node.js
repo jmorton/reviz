@@ -26,7 +26,7 @@ Node.prototype.mass = function(node) {
 };
 
 Node.prototype.getWeight = function(node) {
-	return 1 + (this.adjacent.length * 0.05);
+	return 1;
 };
 
 /**

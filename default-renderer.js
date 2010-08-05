@@ -58,6 +58,24 @@ DefaultRenderer.prototype = {
 	},
 	get selection() {
 		return this._selected;
+	},
+	set hovered(value) {
+		// Don't handle the selection unless what is selected
+		// is actually a new value.
+		if (this._hovered == value) {
+			return;
+		}
+		if (this._hovered != undefined) {
+			this._hovered.hovered = false;
+		}
+		this._hovered = value;
+		if (value != undefined) {
+			this._hovered.hovered = true;
+			this.graph.handleEvent('select', this._hovered);
+		}
+	},
+	get hovered() {
+		return this._hovered;
 	}
 };
 
@@ -206,15 +224,23 @@ DefaultRenderer.prototype.drawLabel = function(node) {
  * @param node2
  */
 DefaultRenderer.prototype.drawEdge = function(node1, node2) {
-	this.context.save();
-	this.context.beginPath();
-	this.context.strokeStyle = Style.Edge.stroke;
-	this.context.lineWidth = Style.Edge.lineWidth;
-	this.context.lineTo(node1.x, node1.y);
-	this.context.lineTo(node2.x, node2.y);
-	this.context.closePath();
-	this.context.stroke();
-	this.context.restore();
+  with(this.context) {
+  	save();
+  	beginPath();
+  	if (node1.selected || node2.selected) {
+  	  this.context.strokeStyle = "rgb(255,255,255)";
+  	} else if (node1.hovered || node2.hovered) {
+  	  this.context.strokeStyle = "rgb(192,192,192)";
+  	} else {
+  	  this.context.strokeStyle = Style.Edge.stroke;
+  	}
+  	lineWidth = Style.Edge.lineWidth;
+  	lineTo(node1.x, node1.y);
+  	lineTo(node2.x, node2.y);
+  	closePath();
+  	stroke();
+  	restore();
+  }
 };
 
 /**

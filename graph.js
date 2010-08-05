@@ -8,7 +8,7 @@ function Graph(canvasId) {
 	this.canvas = canvasId;
 	this.layout = new DefaultLayout(this);
 	this.display = new DefaultRenderer(this);
-	this.depth = 3;
+	this.depth = -1;
 	this.callbacks = {};
 }
 
@@ -36,7 +36,6 @@ Graph.prototype = {
 	set depth(value) {
 		this._depth = value;
 		this.cacheReachableNodes();
-		this.applyDisplay();
 	},
 	get depth() {
 		return this._depth;
@@ -110,7 +109,7 @@ Graph.prototype.connect = function(parentNodeId) {
 
 Graph.prototype.nodeCount = function() {
   var count = 0;
-  for (key in this.nodes) if (this.nodes.hasOwnProperty(key)) count++;
+  for (key in this.nodes) if (this.reachable.hasOwnProperty(key)) count++;
   return count;
 };
 
@@ -190,7 +189,13 @@ Graph.prototype.cacheReachableNodes = function() {
 		this.nodes[ix].reachable = false;
 	}
 	
-	this.reachable = this.rootNode.traverse({}, this.depth);
+	// If the depth is actually specified then traverse, otherwise we assume
+	// all nodes should be displayed.
+	if (this.depth >= 0) {
+	  this.reachable = this.rootNode.traverse({}, this.depth);
+  } else {
+    this.reachable = this.nodes;
+  }
 	
 	for(ix in this.reachable) {
 		this.nodes[ix].reachable = true;
