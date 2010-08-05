@@ -23,6 +23,14 @@ h2 {
 }
 .done {
 }
+#controls {
+  padding: 1em 0;
+}
+ul, li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 </style>
 <script src="default-layout.js"></script>
 <script src="default-renderer.js"></script>
@@ -108,8 +116,6 @@ g.connect('i','n');
 g.connect('foo','g');
 g.connect('phee','n');
 g.connect('phee','m');
-g.display.lookAt(g.nodes.foo);
-g.applyLayout();
 
 g.onNodeSelect(function (node) {
 	console.log(node.id);
@@ -121,6 +127,8 @@ g.onNodeHovered = function (node) {
 
 // Once the initial layout is done... switch to something fancy.
 g.layout = new DefaultLayout(g);
+g.applyLayout();
+g.display.lookAt(g.nodes.foo);
 
 function updateLayout() {
   g.stop();

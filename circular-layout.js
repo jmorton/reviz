@@ -11,24 +11,26 @@ function CircularLayout(graph) {
 CircularLayout.prototype.layout = function() {
   var positions = [];
   
-  // If a node is selected, room needs to be made for N-1 nodes.
+  // If a node is selected, only enough room needs to be made
+  // for N-1 nodes.
   if (this.graph.display.selection == null) {
     var count = ( (this.graph.nodeCount() ) );
   } else {
     var count = ( (this.graph.nodeCount() - 1) );
   }
   
-  console.log(count);
-  
-  // layout all nodes in a circular fashion
+  // Decide the increment amount and a radius relative to the
+  // number of nodes to display.
   var increment = (Math.PI*2) / count;
-  var radius = this.graph.display.nodeSize/2 * count;
+  var radius = this.graph.display.nodeSize/2.5 * count;
   var step = 0;
     
   var theta;
   var x;
   var y;
   
+  // Place each node on the edge of a circle, taking care to skip over
+  // the selected node without leaving a gap in it's place.
   for (key in this.graph.reachable) {
     if (this.graph.display.selection != this.graph.reachable[key]) {
       theta = step * increment;
@@ -40,6 +42,7 @@ CircularLayout.prototype.layout = function() {
     }
   }
   
+  // Place the selected node in the center of the circle
   if (this.graph.display.selection) {
     this.graph.display.selection.x = 0;
     this.graph.display.selection.y = 0;

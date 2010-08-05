@@ -6,7 +6,7 @@
  */
 function DefaultLayout(graph) {
 	this.graph = graph;
-	this.width = 10;
+	this.width = 5;
 }
 
 DefaultLayout.prototype.layout = function() {
