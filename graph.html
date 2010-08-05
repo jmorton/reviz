@@ -32,6 +32,7 @@ ul, li {
   padding: 0;
 }
 </style>
+<!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
 <script src="default-layout.js"></script>
 <script src="default-renderer.js"></script>
 <script src="force-layout.js"></script>
@@ -118,11 +119,11 @@ g.connect('phee','n');
 g.connect('phee','m');
 
 g.onNodeSelect(function (node) {
-	console.log(node.id);
+//	console.log(node.id);
 });
 
 g.onNodeHovered = function (node) {
-	console.log(node);
+//	console.log(node);
 }
 
 // Once the initial layout is done... switch to something fancy.
