@@ -179,9 +179,20 @@ DefaultRenderer.prototype.drawLabel = function(node) {
 	if (this.scale < 0.4) {
 		return false;
 	}
+
+  if (this.selection == node) {
+		this.context.fillStyle = Style.Node.select.fontColor;
+	} else if (this.dragged == node) {
+		this.context.fillStyle = Style.Node.drag.fontColor;
+	} else if (this.hovered == node) {
+		this.context.fillStyle = Style.Node.hover.fontColor;
+	} else {
+	  this.context.fillStyle = Style.Node.fontColor;
+	}
 	
 	with(this.context) {
-		fillStyle = Style.Node.fontColor;
+    // shadowBlur = 2;
+    // shadowColor = 'rgba(255,255,255,1.0)';
 		textAlign = 'center';
 		textBaseline = 'middle';
 		fillText(node.text, 0, 0);
@@ -369,11 +380,6 @@ DefaultRenderer.prototype.zoom = function(delta) {
 	this.scale = Math.min( this.scale, 5.0 );
 };
 
-DefaultRenderer.prototype.focus = function(event) {
-	this.focused = this.containing(e);
-	return true;
-};
-
 /**
  * Find all of the nodes that contain the point contained by the event.
  *
@@ -457,15 +463,18 @@ var Style = {
   	fontColor:    "rgba(0,0,0,0.9)",
   	drag : {
   		fill: 	  "rgba(225,225,225,0.9)",
-  		stroke:   "rgba(128,128,128,0.9)"
+  		stroke:   "rgba(128,128,128,0.9)",
+    	fontColor:  "rgb(0,0,0)"
   	},
   	hover : {
-  		fill: 	 "rgba(225,225,225,0.9)",
-  		stroke:  "rgba(255,255,255,0.9)",
-  		font:    '800 14px/2 "Android Sans", "Lucida Grande", sans-serif'
+  		fill: 	    "rgba(225,225,225,0.9)",
+  		stroke:     "rgba(255,255,255,0.9)",
+  		font:       '800 14px/2 "Android Sans", "Lucida Grande", sans-serif',
+    	fontColor:  "rgb(0,0,0)"
   	},
   	select : {
-  		fill:	 "rgba(255,255,255,1.0)"
+  		fill:	     "rgba(255,255,255,1.0)",
+    	fontColor: "rgba(0,0,0,0.9)"
   	},
   	collapse : {
   		strokeStyle: "rgba(255,255,255,0.5)",

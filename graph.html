@@ -32,7 +32,8 @@ h2 {
 <script src="node.js"></script>
 
 <script>
-// Style.Scene.background = "rgb(255,255,255)";
+Style.Scene.background = "040507";
+
 </script>
 
 </head>
@@ -88,7 +89,21 @@ g.connect('b','c');
 g.connect('c','d');
 g.connect('d','e');
 g.connect('e','f');
-g.connect('f','a');
+g.connect('f','g');
+g.connect('g','h');
+g.connect('h','i');
+g.connect('i','j');
+g.connect('j','k');
+g.connect('k','l');
+g.connect('l','m');
+g.connect('f','n');
+g.connect('g','n');
+g.connect('h','n');
+g.connect('i','n');
+g.connect('foo','g');
+g.connect('phee','n');
+g.connect('phee','m');
+
 g.applyLayout();
 g.applyDisplay();
 g.depth = 40;
