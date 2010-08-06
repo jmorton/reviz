@@ -40,4 +40,4 @@ CircularLayout.prototype.layout = function() {
   }
   
   return positions;
-}
+};

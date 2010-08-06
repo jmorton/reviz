@@ -70,6 +70,12 @@ Node.prototype.toggle = function() {
 	this._collapsed = ! this._collapsed;
 };
 
+/**
+ * True if the node is collapsed and has children.  Useful for determining
+ * if something should indicate that it can be expanded.  Of course, nodes
+ * without children can't be expanded.
+ * @returns {Boolean}
+ */
 Node.prototype.isHidingChildren = function() {
 	return (this.collapsed() && (this.adjacent.length > 0));
-}
+};

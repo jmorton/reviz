@@ -18,7 +18,8 @@ function ForceDirectedLayout(graph) {
  * 
  * @param graph {Graph}
  * @returns
- */ForceDirectedLayout.prototype.layout = function() {
+ */
+ForceDirectedLayout.prototype.layout = function() {
 	this.graph.eachPair(ForceDirectedLayout.repel);
 	this.graph.eachEdge(ForceDirectedLayout.attract);
 	return true;
