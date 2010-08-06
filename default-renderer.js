@@ -137,42 +137,53 @@ DefaultRenderer.prototype.draw = function() {
  * @param node
  */
 DefaultRenderer.prototype.drawNode = function(node) {
-	this.context.save();
-	
-	this.context.fillStyle = Style.Node.fill;
-	this.context.strokeStyle = Style.Node.stroke;
-	this.context.lineWidth = Style.Node.lineWidth;
-	this.context.font = Style.Node.font;
-	
-	if (this.selection == node) {
-		this.context.fillStyle = Style.Node.select.fill;
-	} else if (this.dragged == node) {
-		this.context.fillStyle = Style.Node.drag.fill;
-		this.context.strokeStyle = Style.Node.drag.stroke;
-	} else if (this.hovered == node) {
-		this.context.fillStyle = Style.Node.hover.fill;
-		this.context.strokeStyle = Style.Node.hover.stroke;
-		this.context.font = Style.Node.hover.font;
+	with (this.context) {
+		save();
+		
+		if (node.style) {
+			var custom = node.style || Style.Node;
+		}
+
+		font             = Style.Node.font;
+		fillStyle        = (custom || Style.Node).fill;
+		strokeStyle      = (custom || Style.Node).stroke;
+		lineWidth        = Style.Node.lineWidth;
+		font             = Style.Node.font;
+
+		if (this.selection == node) {
+			fillStyle    = Style.Node.select.fill;
+			strokeStyle  = Style.Node.select.stroke;
+			font         = Style.Node.font;
+			
+		} else if (this.dragged == node) {
+			fillStyle    = Style.Node.drag.fill;
+			strokeStyle  = Style.Node.drag.stroke;
+			
+		} else if (this.hovered == node) {
+			fillStyle    = Style.Node.hover.fill;
+			strokeStyle  = Style.Node.hover.stroke;
+			font         = Style.Node.hover.font;
+			
+		}
+		
+		// Center the x/y of the node
+		translate(node.x, node.y);
+		this.drawPath(node);
+		stroke();
+		fill();
+		
+//		// Draw a circle around the 
+//		if (node.isHidingChildren()) {
+//			strokeStyle = Style.Node.collapse.strokeStyle;
+//			lineWidth = Style.Node.collapse.lineWidth;
+//	    	arc(0, 0, (node.getWeight() * this.nodeSize) + 4, 0, 2*Math.PI, false);
+//	    	stroke(0, 0, this.width, this.height);
+//	    }
+//		
+		this.drawLabel(node);
+		
+		restore();
 	}
-	
-	// Center the x/y of the node
-	this.context.translate(node.x, node.y);
-	
-	this.drawPath(node);
-	this.context.stroke(0, 0, this.width, this.height);
-	this.context.fill();
-	
-	if (node.isHidingChildren()) {
-		this.context.strokeStyle = Style.Node.collapse.strokeStyle;
-		this.context.lineWidth = Style.Node.collapse.lineWidth;
-    	this.context.arc(0, 0, (node.getWeight() * this.nodeSize) + 4, 0, 2*Math.PI, false);
-    	this.context.stroke(0, 0, this.width, this.height);
-    }
-	
-	this.drawLabel(node);
-	
-	this.context.restore();
-	
 };
 
 /**
@@ -535,7 +546,8 @@ var Style = {
   	},
   	select : {
   		fill:	     "rgba(255,255,255,1.0)",
-    	fontColor: "rgba(0,0,0,0.9)"
+  		stroke:      "rgba(255,255,255,1.0)",
+  		fontColor:   "rgba(0,0,0,0.9)"
   	},
   	collapse : {
   		strokeStyle: "rgba(255,255,255,0.5)",

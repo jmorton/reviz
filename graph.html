@@ -51,7 +51,7 @@ Style.Scene.background = "040507";
 
 <h1>Canvas Based Graph Visualization</h1>
 
-<canvas id="myGraph" width="940" height="600"></canvas>
+<canvas id="myGraph" width="800" height="450"></canvas>
 
 <div id="controls">
 
@@ -117,6 +117,21 @@ g.connect('i','n');
 g.connect('foo','g');
 g.connect('phee','n');
 g.connect('phee','m');
+
+Style.Scene.background = 'rgb(128,128,128)';
+
+Style.Red = {
+	fill:   'rgba(225,0,0,0.9)',
+	stroke: 'rgba(225,0,0,0.75)'
+};
+
+Style.DarkRed = {
+	fill:   'rgba(155,0,0,0.9)',
+	stroke: 'rgba(155,0,0,0.75)'
+};
+
+g.nodes.foo.style = Style.Red;
+g.nodes.phee.style = Style.DarkRed;
 
 g.onNodeSelect(function (node) {
 //	console.log(node.id);
