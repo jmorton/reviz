@@ -312,6 +312,7 @@ DefaultRenderer.prototype.listen = function() {
 				var delta = event.detail * 10;
 				renderer.zoom(delta);
 				renderer.redraw();
+				DefaultRenderer.cancelEvent(event);
 		}, false);
 		
 		this.canvas.addEventListener('mousewheel',
@@ -319,9 +320,27 @@ DefaultRenderer.prototype.listen = function() {
 				var delta = event.wheelDelta;
 				renderer.zoom(delta);
 				renderer.redraw();
+				DefaultRenderer.cancelEvent(event);
 			}, false);
 		
 	}
+};
+
+DefaultRenderer.cancelEvent = function(event) {
+	// jaG.
+    event = event ? event : window.event;
+    
+    if (event.stopPropagation) {
+        event.stopPropagation();    
+    }
+    if (event.preventDefault) {
+        event.preventDefault();
+    }
+    event.cancelBubble = true;
+    event.cancel = true;
+    event.returnValue = false;
+    
+    return false;
 };
 
 /**
