@@ -455,8 +455,8 @@ DefaultRenderer.prototype.containing = function(event) {
  */
 DefaultRenderer.prototype.relativePoint = function(event) {
 	return {
-		x: ((event.clientX - event.target.offsetLeft) - this.offset.x) / this.scale,
-		y: ((event.clientY - event.target.offsetTop) - this.offset.y) / this.scale
+		x: ((event.pageX - event.target.offsetLeft) - this.offset.x) / this.scale,
+		y: ((event.pageY - event.target.offsetTop) - this.offset.y) / this.scale
 	};
 };
 
