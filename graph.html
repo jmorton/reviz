@@ -28,8 +28,11 @@ h2 {
 }
 ul, li {
   list-style: none;
-  margin: 0;
+  margin: 0 1.5em 0 0;
   padding: 0;
+}
+#controls li {
+  float: left;
 }
 </style>
 <!--[if IE]><script type="text/javascript" src="excanvas.compiled.js"></script><![endif]-->
@@ -73,6 +76,9 @@ Style.Scene.background = "040507";
       <input id="maximumChildren">
       <input id="maximumAncestors">
       </fieldset>
+    </li>
+    <li>
+    <input type="button" value="Save Image" onclick="saveCanvas()" />
     </li>
   </ul>
 </form>
@@ -150,6 +156,10 @@ function updateLayout() {
   }
   g.display.lookAt(g.nodes.foo);
   g.start();
+}
+
+function saveCanvas() {
+	g.save();
 }
 
 --></script>

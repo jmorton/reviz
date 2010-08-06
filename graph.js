@@ -214,6 +214,13 @@ Graph.prototype.onNodeSelect = function(callback) {
 	this.callbacks['select'] = callback;
 };
 
+Graph.prototype.save = function() {
+	var mime = 'image/octet-stream';
+	var data = this.display.canvas.toDataURL();
+	document.location.href = data.replace('image/png',mime);
+	return true;
+};
+
 /**
  * Utility function for calculating the magnitude between two
  * points.  It does not handle direction though.
