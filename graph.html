@@ -18,31 +18,57 @@ h2 {
 #myGraph {
 	border: 1px solid #ccc;
 }
-#forceLayoutParameters {
-  display: none;
-}
 .done {
 }
 #controls {
   padding: 1em 0;
+}
+.slider {
+  width: 10em;
+}
+#controls .ui-slider .ui-slider-handle {
+	width: 0.5em; margin-left: -0.25em;
+}
+#controls .ui-slider {
+	height: 10px;
+}
+#controls input {
+  display: none;
 }
 ul, li {
   list-style: none;
   margin: 0;
   padding: 0;
 }
+
+ul.compact li {
+  float:left;
+  margin-right: 1em
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
 </style>
 <!--[if IE]><script type="text/javascript" src="excanvas.compiled.js"></script><![endif]-->
-<script src="default-layout.js"></script>
-<script src="default-renderer.js"></script>
-<script src="force-layout.js"></script>
-<script src="circular-layout.js"></script>
-<script src="graph.js"></script>
-<script src="node.js"></script>
+
+<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" />	
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.4.custom.min.js"></script>
+
+<script type="text/javascript" src="default-layout.js"></script>
+<script type="text/javascript" src="default-renderer.js"></script>
+<script type="text/javascript" src="force-layout.js"></script>
+<script type="text/javascript" src="circular-layout.js"></script>
+<script type="text/javascript" src="graph.js"></script>
+<script type="text/javascript" src="node.js"></script>
+<script type="text/javascript" src="default-layout.js"></script>
 
 <script>
 Style.Scene.background = "040507";
-
 </script>
 
 </head>
@@ -67,11 +93,44 @@ Style.Scene.background = "040507";
     </li>
     <li>
       <fieldset id="forceLayoutParameters">
-      <input id="repulsiveForce">
-      <input id="attractiveForce">
-      <input id="attractiveEquilibrium">
-      <input id="maximumChildren">
-      <input id="maximumAncestors">
+      <ul class="compact">
+
+		<li>
+	      <label for="repulsiveForce">Repulsion</label>
+	      <input id="repulsiveForce" name="repulsiveForce">
+	      <div id="repulsiveForceSlider" class="slider"></div>
+		</li>
+		
+		<li>
+	      <label for="attractiveForce">Attraction</label>
+	      <input id="attractiveForce">
+	      <div id="attractiveForceSlider" class="slider"></div>
+		</li>
+		
+		<li>
+	      <label for="attractiveEquilibrium">Equilibrium</label>
+	      <input id="attractiveEquilibrium">
+	      <div id="attractiveEquilibriumSlider" class="slider"></div>
+		</li>
+		      
+    	<li>
+	      <input id="maximumChildren">
+	      <input id="maximumAncestors">
+		</li>
+		
+		<li>      
+	      <label for="zoom">Zoom</label>
+	      <div id="zoomSlider" class="slider"></div>
+	      <input id="zoom">
+      	</li>
+      	
+		<li>      
+	      <label for="size">Size</label>
+	      <div id="sizeSlider" class="slider"></div>
+	      <input id="size">
+      	</li>
+
+      </ul>
       </fieldset>
     </li>
   </ul>
@@ -90,7 +149,7 @@ Style.Scene.background = "040507";
 <li>TODO: Detect edge selection event.</li>
 </ul>
 
-<script><!--
+<script  type="text/javascript"><!--
 
 var g = new Graph('myGraph');
 g.add('foo');
@@ -114,9 +173,6 @@ g.connect('f','n');
 g.connect('g','n');
 g.connect('h','n');
 g.connect('i','n');
-g.connect('foo','g');
-g.connect('phee','n');
-g.connect('phee','m');
 
 Style.Scene.background = 'rgb(128,128,128)';
 
@@ -166,6 +222,76 @@ function updateLayout() {
   g.display.lookAt(g.nodes.foo);
   g.start();
 }
+
+$(function() {
+	$("#repulsiveForceSlider").slider({
+		value: 100,
+		min:   1,
+		max:   500,
+		step:  1,
+		slide: function(event, ui) {
+			$("#repulsiveForce").val(ui.value);
+			ForceDirectedLayout.repulsiveForce  = ui.value;
+			g.animate(g);
+		}
+	});
+	$("#repulsiveForce").val($("#repulsiveForceSlider").slider("value"));
+	
+	$("#attractiveForceSlider").slider({
+		value: 0.5,
+		min:   0.1,
+		max:   1.0,
+		step:  0.1,
+		slide: function(event, ui) {
+			$("#attractiveForce").val(ui.value);
+			ForceDirectedLayout.attractiveForce  = ui.value;
+			g.animate(g);
+		}
+	});
+	$("#attractiveForce").val($("#attractiveForceSlider").slider("value"));
+
+	$("#attractiveEquilibriumSlider").slider({
+		value: 20,
+		min:   20,
+		max:   500,
+		step:  1,
+		slide: function(event, ui) {
+			$("#attractiveEquilibrium").val(ui.value);
+			ForceDirectedLayout.equilibrium = ui.value;
+			g.animate(g);
+		}
+	});
+	$("#attractiveEquilibrium").val($("#attractiveEquilibriumSlider").slider("value"));
+
+	$("#zoomSlider").slider({
+		value: 1.0,
+		min:   0.25,
+		max:   2.0,
+		step:  0.1,
+		slide: function(event, ui) {
+			$("#zoom").val(ui.value);
+			g.display.scale = ui.value;
+			g.display.redraw();
+		}
+	});
+	$("#zoom").val($("#zoomSlider").slider("value"));
+	
+	$("#sizeSlider").slider({
+		value: 25,
+		min:   10,
+		max:   100,
+		step:  1,
+		slide: function(event, ui) {
+			$("#size").val(ui.value);
+			g.display.nodeSize = ui.value;
+			g.display.redraw();
+		}
+	});
+	$("#size").val($("#sizeSlider").slider("value"));
+	
+});
+
+
 
 --></script>
 </body>

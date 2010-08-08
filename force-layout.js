@@ -1,5 +1,8 @@
 function ForceDirectedLayout(graph) {
 	this.graph = graph;
+	ForceDirectedLayout.attractiveForce = 1.0;
+	ForceDirectedLayout.equilibrium     = 100;
+	ForceDirectedLayout.repulsiveForce  = 100;
 };
 
 /**
@@ -26,12 +29,12 @@ ForceDirectedLayout.prototype.layout = function() {
 };
 
 // this refers to the display 
-ForceDirectedLayout.repel = function(attractor,n2) {
+ForceDirectedLayout.repel = function(attractor,attracted) {
 	if ((this.dragged == attractor) ||
 		(this.selection == attractor)) {
 		return false;
 	}
-	attractor.add(repulsiveForce(attractor,n2));
+	attractor.add(repulsiveForce(attractor,attracted,ForceDirectedLayout.repulsiveForce));
 };
 
 // this refers to the display. 
@@ -39,7 +42,7 @@ ForceDirectedLayout.attract = function(attractor,attracted) {
 	if ((this.dragged == attracted) || (this.selection == attracted)) {
 		return false;
 	}
-	attracted.add(springForce(attractor,attracted));
+	attracted.add(springForce(attractor,attracted,ForceDirectedLayout.attractiveForce,ForceDirectedLayout.equilibrium));
 };
 
 /** Calculates the distance between to objects.
@@ -67,14 +70,6 @@ ForceDirectedLayout.angle = function(p1, p2) {
  * @returns {Vector}
  */
 function springForce(p1, p2, spring, equilibrium) {
-  
-  if (spring == undefined) {
-    spring = 0.7;
-  }
-  
-  if (equilibrium == undefined) {
-    equilibrium = 100.0;
-  }
   
   var magnitude = ForceDirectedLayout.distance(p1, p2);    
   var theta = ForceDirectedLayout.angle(p1, p2);
@@ -108,10 +103,6 @@ function springForce(p1, p2, spring, equilibrium) {
  */
 function repulsiveForce(p1, p2, force) {
 	
-	if (force == undefined) {
-		force = 50.0;
-	}
-		
 	var magnitude = (force / ForceDirectedLayout.distance(p1,p2)) * 0.6;
 	var theta = ForceDirectedLayout.angle(p1, p2);
 	
