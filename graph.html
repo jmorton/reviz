@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Graph on a Canvas</title>
-<style>
+<style><!--
 * {
 	font-family: 'Droid Sans', 'Lucida Grande', 'Verdana';
 	font-size: 10pt;
@@ -35,6 +35,9 @@ h2 {
 #controls input {
   display: none;
 }
+#controls input[type="button"] {
+  display: inline;
+}
 ul, li {
   list-style: none;
   margin: 0;
@@ -47,13 +50,14 @@ ul.compact li {
 }
 
 fieldset {
-  margin: 0;
+  margin: 0.5em 0 1em 0;
   padding: 0;
   border: none;
+  clear: both;
 }
 
-</style>
-<!--[if IE]><script type="text/javascript" src="excanvas.compiled.js"></script><![endif]-->
+--></style>
+<!--[if IE]><script type="text/javascript" src="js/excanvas.compiled.js"></script><![endif]-->
 
 <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" />	
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
@@ -82,17 +86,34 @@ Style.Scene.background = "040507";
 <div id="controls">
 
 <form>
-  <ul>
-    <li>
+	<fieldset>
       <label for="layout">Layout</label>
       <select id="layout" name="layout" onchange="updateLayout()">
       <option value="default">Tile Based</option>
       <option value="force-layout">Force Directed</option>
       <option value="circular-layout">Circular</option>
       </select>
-    </li>
-    <li>
-      <fieldset id="forceLayoutParameters">
+      <input type="button" value="Start/Stop" onclick="toggle()" />
+      <ul class="compact">
+	      <li>      
+		      <label for="zoom">Zoom</label>
+		      <div id="zoomSlider" class="slider"></div>
+		      <input id="zoom">
+	      </li>	      	
+		  <li>      
+		      <label for="size">Size</label>
+		      <div id="sizeSlider" class="slider"></div>
+		      <input id="size">
+	      </li>
+		  <li>      
+		      <label for="depth">Depth</label>
+		      <div id="depthSlider" class="slider"></div>
+		      <input id="depth">
+	      </li>
+      </ul>
+      	
+    </fieldset>
+    <fieldset id="forceLayoutParameters">
       <ul class="compact">
 
 		<li>
@@ -117,23 +138,10 @@ Style.Scene.background = "040507";
 	      <input id="maximumChildren">
 	      <input id="maximumAncestors">
 		</li>
-		
-		<li>      
-	      <label for="zoom">Zoom</label>
-	      <div id="zoomSlider" class="slider"></div>
-	      <input id="zoom">
-      	</li>
-      	
-		<li>      
-	      <label for="size">Size</label>
-	      <div id="sizeSlider" class="slider"></div>
-	      <input id="size">
-      	</li>
 
       </ul>
-      </fieldset>
-    </li>
-  </ul>
+    </fieldset>
+  
 </form>
 </div>
 
@@ -173,6 +181,7 @@ g.connect('f','n');
 g.connect('g','n');
 g.connect('h','n');
 g.connect('i','n');
+g.connect('j','n');
 
 Style.Scene.background = 'rgb(128,128,128)';
 
@@ -201,6 +210,14 @@ g.onNodeHovered = function (node) {
 g.layout = new DefaultLayout(g);
 g.applyLayout();
 g.display.lookAt(g.nodes.foo);
+
+function toggle() {
+	if (g.isPlaying()) {
+		g.stop();		
+	} else {
+		g.start();
+	}
+}
 
 function updateLayout() {
   g.stop();
@@ -265,13 +282,13 @@ $(function() {
 
 	$("#zoomSlider").slider({
 		value: 1.0,
-		min:   0.25,
+		min:   0.1,
 		max:   2.0,
 		step:  0.1,
 		slide: function(event, ui) {
 			$("#zoom").val(ui.value);
 			g.display.scale = ui.value;
-			g.display.redraw();
+			g.animate(g);
 		}
 	});
 	$("#zoom").val($("#zoomSlider").slider("value"));
@@ -284,11 +301,24 @@ $(function() {
 		slide: function(event, ui) {
 			$("#size").val(ui.value);
 			g.display.nodeSize = ui.value;
-			g.display.redraw();
+			g.animate(g);
 		}
 	});
 	$("#size").val($("#sizeSlider").slider("value"));
 	
+	$("#depthSlider").slider({
+		value: -1,
+		min:   -1,
+		max:   42,
+		step:  1,
+		slide: function(event, ui) {
+			$("#depth").val(ui.value);
+			g.setDepth(ui.value);
+			g.animate(g);
+		}
+	});
+	$("#depth").val($("#depthSlider").slider("value"));
+
 });
 
 

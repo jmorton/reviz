@@ -8,7 +8,7 @@ function Graph(canvasId) {
 	this.setCanvas(canvasId);
 	this.setLayout(new DefaultLayout(this));
 	this.setDisplay(new DefaultRenderer(this));
-	this.setDepth(-1);
+	this.setDepth(2);
 	this.callbacks = {};
 }
 
@@ -191,8 +191,8 @@ Graph.prototype.cacheReachableNodes = function() {
 	
 	// If the depth is actually specified then traverse, otherwise we assume
 	// all nodes should be displayed.
-	if (this.depth >= 0) {
-	  this.reachable = this.rootNode.traverse({}, this.depth);
+	if (this.getDepth() >= 0) {
+	  this.reachable = this.rootNode.traverse({}, this.getDepth());
   } else {
     this.reachable = this.nodes;
   }

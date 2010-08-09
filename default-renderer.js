@@ -436,8 +436,8 @@ DefaultRenderer.prototype.hovering = function(e) {
  */
 DefaultRenderer.prototype.zoom = function(delta) {
 	this.scale += 0.001 * delta;
-	this.scale = Math.max( this.scale, 0.25 );
-	this.scale = Math.min( this.scale, 5.0 );
+	this.scale = Math.max( this.scale, 0.1 );
+	this.scale = Math.min( this.scale, 2.5 );
 };
 
 /**
