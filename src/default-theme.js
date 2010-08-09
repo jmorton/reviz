@@ -37,7 +37,6 @@ DefaultTheme.prototype.drawNode = function(node, context) {
 		context.strokeStyle  = Style.Node.drag.stroke;
 		context.font         = Style.Node.drag.font;
 	} else if (node.hovered) {
-		console.log(node.hovered);
 		context.fillStyle    = Style.Node.hover.fill;
 		context.strokeStyle  = Style.Node.hover.stroke;
 		context.font         = Style.Node.hover.font;
