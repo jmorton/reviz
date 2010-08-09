@@ -19,6 +19,8 @@ function DefaultDisplay(graph) {
 		y : 0
 	};
 
+  this.nodeSize = Style.Node.size;
+  
 	// The node that the cursor is over
 	this.setHovered(null);
 
