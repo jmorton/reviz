@@ -22,6 +22,8 @@ function DefaultRenderer(graph) {
 	// The node that the cursor is over
 	this.setHovered(null);
 	
+	this.setTheme(DefaultTheme);
+	
 	// The node that is being dragged
 	this.dragged = null;
 	
@@ -76,6 +78,12 @@ DefaultRenderer.prototype = {
 	},
 	getHovered: function() {
 		return this.hovered;
+	},
+	setTheme: function (theme) {
+		this.theme = theme;
+	},
+	getTheme: function () {
+		return this.theme;
 	}
 };
 
@@ -111,147 +119,24 @@ DefaultRenderer.prototype.draw = function() {
 		for (i2 in fromNode.adjacent) {
 			var toNode = fromNode.adjacent[i2];
 			if (fromNode.reachable && toNode.reachable) {
-				this.drawEdge(fromNode,toNode);
+				this.theme.drawEdge(fromNode, toNode, this.context);
 			}
 		}
 	}
 	
 	// Draw reachable nodes
 	for (index in this.graph.reachable) {
-		this.drawNode(this.graph.nodes[index]);
+		this.theme.drawNode(this.graph.nodes[index], this.context);
 	}
 	
 	// Draw hovered nodes
 	if (this.hovered) {
-	  this.drawNode(this.hovered);
+		this.theme.drawNode(this.hovered, this.context);
 	}
 	
 	this.context.restore();
 
 	return this;
-};
-
-/**
- * Draws the node and label.
- *
- * @param node
- */
-DefaultRenderer.prototype.drawNode = function(node) {
-	with (this.context) {
-		save();
-		
-		if (node.style) {
-			var custom = node.style || Style.Node;
-		}
-
-		font             = Style.Node.font;
-		fillStyle        = (custom || Style.Node).fill;
-		strokeStyle      = (custom || Style.Node).stroke;
-		lineWidth        = Style.Node.lineWidth;
-		font             = Style.Node.font;
-
-		if (this.selection == node) {
-			fillStyle    = Style.Node.select.fill;
-			strokeStyle  = Style.Node.select.stroke;
-			font         = Style.Node.font;
-			
-		} else if (this.dragged == node) {
-			fillStyle    = Style.Node.drag.fill;
-			strokeStyle  = Style.Node.drag.stroke;
-			
-		} else if (this.hovered == node) {
-			fillStyle    = Style.Node.hover.fill;
-			strokeStyle  = Style.Node.hover.stroke;
-			font         = Style.Node.hover.font;
-			
-		}
-		
-		// Center the x/y of the node
-		translate(node.x, node.y);
-		this.drawPath(node);
-		stroke();
-		fill();
-		
-//		// Draw a circle around the 
-//		if (node.isHidingChildren()) {
-//			strokeStyle = Style.Node.collapse.strokeStyle;
-//			lineWidth = Style.Node.collapse.lineWidth;
-//	    	arc(0, 0, (node.getWeight() * this.nodeSize) + 4, 0, 2*Math.PI, false);
-//	    	stroke(0, 0, this.width, this.height);
-//	    }
-//		
-		this.drawLabel(node);
-		
-		restore();
-	}
-};
-
-/**
- * Creates the path without actually filling it in or adding an outline.
- *
- * @param node
- */
-DefaultRenderer.prototype.drawPath = function(node) {
-  with(this.context) {
-    beginPath();
-    arc(0, 0, node.getWeight() * this.nodeSize, 0, Math.PI*2, false);
-    closePath();
-  }
-};
-
-/**
- * Creates a label for the node.
- *
- * @param node
- */
-DefaultRenderer.prototype.drawLabel = function(node) {
-	if (this.scale < 0.4) {
-		return false;
-	}
-
-  if (this.selection == node) {
-		this.context.fillStyle = Style.Node.select.fontColor;
-	} else if (this.dragged == node) {
-		this.context.fillStyle = Style.Node.drag.fontColor;
-	} else if (this.hovered == node) {
-		this.context.fillStyle = Style.Node.hover.fontColor;
-	} else {
-	  this.context.fillStyle = Style.Node.fontColor;
-	}
-	
-	with(this.context) {
-    // shadowBlur = 2;
-    // shadowColor = 'rgba(255,255,255,1.0)';
-		textAlign = 'center';
-		textBaseline = 'middle';
-		fillText(node.label || node.id, 0, 0);
-	}
-};
-
-/**
- * Creates a line between two nodes.
- *
- * @param node1
- * @param node2
- */
-DefaultRenderer.prototype.drawEdge = function(node1, node2) {
-  with(this.context) {
-  	save();
-  	beginPath();
-  	if (node1.selected || node2.selected) {
-  	  this.context.strokeStyle = "rgb(255,255,255)";
-  	} else if (node1.hovered || node2.hovered) {
-  	  this.context.strokeStyle = "rgb(192,192,192)";
-  	} else {
-  	  this.context.strokeStyle = Style.Edge.stroke;
-  	}
-  	lineWidth = Style.Edge.lineWidth;
-  	lineTo(node1.x, node1.y);
-  	lineTo(node2.x, node2.y);
-  	closePath();
-  	stroke();
-  	restore();
-  }
 };
 
 /**
@@ -520,44 +405,3 @@ DefaultRenderer.topMost = function(list) {
   }
 };
 
-
-var Style = {
-  
-  Scene : {
-    background: "rgb(112,112,112)"
-  },
-  
-  Node : {
-  	fill:		  "rgba(210,210,210,0.8)",
-  	stroke: 	  "rgba(55,55,55,0.9)",
-  	lineWidth:    3,
-  	font:         '600 14px/2 "Android Sans", "Lucida Grande", sans-serif',
-  	fontColor:    "rgba(0,0,0,0.9)",
-  	drag : {
-  		fill: 	  "rgba(225,225,225,0.9)",
-  		stroke:   "rgba(128,128,128,0.9)",
-    	fontColor:  "rgb(0,0,0)"
-  	},
-  	hover : {
-  		fill: 	    "rgba(225,225,225,0.9)",
-  		stroke:     "rgba(255,255,255,0.9)",
-  		font:       '800 14px/2 "Android Sans", "Lucida Grande", sans-serif',
-    	fontColor:  "rgb(0,0,0)"
-  	},
-  	select : {
-  		fill:	     "rgba(255,255,255,1.0)",
-  		stroke:      "rgba(255,255,255,1.0)",
-  		fontColor:   "rgba(0,0,0,0.9)"
-  	},
-  	collapse : {
-  		strokeStyle: "rgba(255,255,255,0.5)",
-  		lineWidth: 1
-  	}
-  },
-	
-	Edge  : {
-	  lineWidth:  2,
-	  stroke:    "rgba(77,77,77,0.7)"
-	}
-	
-};
