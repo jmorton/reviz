@@ -7,7 +7,7 @@ function Graph(canvasId) {
 	this.edges = [];
 	this.setCanvas(canvasId);
 	this.setLayout(DefaultLayout);
-	this.setDisplay(DefaultRenderer);
+	this.setDisplay(DefaultDisplay);
 	this.setTheme(DefaultTheme);
 	this.setDepth(10);
 	this.callbacks = {};

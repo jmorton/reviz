@@ -2,9 +2,9 @@
  * Component for abstracting the rendering of the graph.
  *
  * @param graph
- * @returns {DefaultRenderer}
+ * @returns {DefaultDisplay}
  */
-function DefaultRenderer(graph) {
+function DefaultDisplay(graph) {
   
   // The renderer needs to be able to reference the graph
   // so that it can access node data.
@@ -32,7 +32,7 @@ function DefaultRenderer(graph) {
 	this.listen();
 };
 
-DefaultRenderer.prototype = {
+DefaultDisplay.prototype = {
 	setGraph: function(value) {
 		this.graph = value;
 		this.canvas = value.canvas;
@@ -84,7 +84,7 @@ DefaultRenderer.prototype = {
  * 
  * @returns
  */
-DefaultRenderer.prototype.blank = function() {
+DefaultDisplay.prototype.blank = function() {
 	this.context.save();
 	this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
 	this.context.fillStyle = Style.Scene.background;
@@ -98,7 +98,7 @@ DefaultRenderer.prototype.blank = function() {
  * @param graph
  * @returns
  */
-DefaultRenderer.prototype.draw = function() {
+DefaultDisplay.prototype.draw = function() {
 	this.context.save();
 	
 	// Move the canvas to wherever it has been dragged.
@@ -134,7 +134,7 @@ DefaultRenderer.prototype.draw = function() {
 /**
  * Clear the viewing area and draw nodes, edges, and labels.
  */
-DefaultRenderer.prototype.redraw = function() {
+DefaultDisplay.prototype.redraw = function() {
 	this.blank();
 	this.draw();
 };
@@ -142,7 +142,7 @@ DefaultRenderer.prototype.redraw = function() {
 /**
  * Create and register mouse event handlers.
  */
-DefaultRenderer.prototype.listen = function() {
+DefaultDisplay.prototype.listen = function() {
 	var renderer = this;
 	
 	this.canvas.addEventListener('mousedown', function(event) {
@@ -175,7 +175,7 @@ DefaultRenderer.prototype.listen = function() {
 	}, false);
 	
 	this.canvas.addEventListener('dblclick', function(event) {
-		var target = DefaultRenderer.topMost(renderer.containing(event));
+		var target = DefaultDisplay.topMost(renderer.containing(event));
 		
 		// Expand or collapse a node...
 		if (target != null) {
@@ -200,7 +200,7 @@ DefaultRenderer.prototype.listen = function() {
 				var delta = event.detail * 10;
 				renderer.zoom(delta);
 				renderer.redraw();
-				DefaultRenderer.cancelEvent(event);
+				DefaultDisplay.cancelEvent(event);
 		}, false);
 		
 		this.canvas.addEventListener('mousewheel',
@@ -208,13 +208,13 @@ DefaultRenderer.prototype.listen = function() {
 				var delta = event.wheelDelta;
 				renderer.zoom(delta);
 				renderer.redraw();
-				DefaultRenderer.cancelEvent(event);
+				DefaultDisplay.cancelEvent(event);
 			}, false);
 		
 	}
 };
 
-DefaultRenderer.cancelEvent = function(event) {
+DefaultDisplay.cancelEvent = function(event) {
 	// jaG.
     event = event ? event : window.event;
     
@@ -236,8 +236,8 @@ DefaultRenderer.cancelEvent = function(event) {
  *
  * @param e
  */
-DefaultRenderer.prototype.makeSelection = function(e) {
-	this.setSelection(DefaultRenderer.topMost(this.containing(e)));
+DefaultDisplay.prototype.makeSelection = function(e) {
+	this.setSelection(DefaultDisplay.topMost(this.containing(e)));
 };
 
 /**
@@ -245,10 +245,10 @@ DefaultRenderer.prototype.makeSelection = function(e) {
  *
  * @param e
  */
-DefaultRenderer.prototype.startDragging = function(e) {
+DefaultDisplay.prototype.startDragging = function(e) {
 	this.lastPoint = e;
 	this.dragging  = true;
-	this.dragged   = DefaultRenderer.topMost(this.containing(e));
+	this.dragged   = DefaultDisplay.topMost(this.containing(e));
 	this.noDragDetected = true;
 };
 
@@ -256,7 +256,7 @@ DefaultRenderer.prototype.startDragging = function(e) {
  * Release the node being dragged.
  * @param e
  */
-DefaultRenderer.prototype.stopDragging = function(e) {
+DefaultDisplay.prototype.stopDragging = function(e) {
 	this.dragging  = false;
 	this.actuallyDragged = false;
 	this.lastPoint = null;
@@ -268,7 +268,7 @@ DefaultRenderer.prototype.stopDragging = function(e) {
  *
  * @param e
  */
-DefaultRenderer.prototype.dragScene = function(e) {
+DefaultDisplay.prototype.dragScene = function(e) {
 	if (this.lastPoint != undefined) {
 		this.offset.x += (e.clientX - this.lastPoint.clientX);
 		this.offset.y += (e.clientY - this.lastPoint.clientY);
@@ -282,7 +282,7 @@ DefaultRenderer.prototype.dragScene = function(e) {
  *
  * @param e
  */
-DefaultRenderer.prototype.dragNode = function(e) {
+DefaultDisplay.prototype.dragNode = function(e) {
 	this.dragged.x += (e.clientX - this.lastPoint.clientX) / this.scale;
 	this.dragged.y += (e.clientY - this.lastPoint.clientY) / this.scale;
 	this.lastPoint = e;
@@ -295,14 +295,14 @@ DefaultRenderer.prototype.dragNode = function(e) {
  *
  * @param e
  */
-DefaultRenderer.prototype.hovering = function(e) {
+DefaultDisplay.prototype.hovering = function(e) {
 	// I've decided to use a separate list so that we don't have
 	// to iterate over all nodes in order to get a subset of them.
 	// Also, it makes it easier to 'dehover' a node. Instead
 	// of iterating over a list and setting a property, the list
 	// is destroyed/emptied. If it makes more sense to iterate
 	// (and/or performant) then this approach should be changed.
-	this.setHovered(DefaultRenderer.topMost(this.containing(e)));
+	this.setHovered(DefaultDisplay.topMost(this.containing(e)));
 };
 
 /**
@@ -311,7 +311,7 @@ DefaultRenderer.prototype.hovering = function(e) {
  *
  * @param delta
  */
-DefaultRenderer.prototype.zoom = function(delta) {
+DefaultDisplay.prototype.zoom = function(delta) {
 	this.scale += 0.001 * delta;
 	this.scale = Math.max( this.scale, 0.1 );
 	this.scale = Math.min( this.scale, 2.5 );
@@ -322,7 +322,7 @@ DefaultRenderer.prototype.zoom = function(delta) {
  *
  * @param event
  */
-DefaultRenderer.prototype.containing = function(event) {
+DefaultDisplay.prototype.containing = function(event) {
 	var relativePoint = this.relativePoint(event);
 	var nodes = [];
 	for (index in this.graph.reachable) {
@@ -341,7 +341,7 @@ DefaultRenderer.prototype.containing = function(event) {
  * @param event
  * @returns
  */
-DefaultRenderer.prototype.relativePoint = function(event) {
+DefaultDisplay.prototype.relativePoint = function(event) {
 	return {
 		x: ((event.pageX - event.target.offsetLeft) - this.offset.x) / this.scale,
 		y: ((event.pageY - event.target.offsetTop) - this.offset.y) / this.scale
@@ -356,7 +356,7 @@ DefaultRenderer.prototype.relativePoint = function(event) {
  * @param point
  * @param node
  */
-DefaultRenderer.prototype.isPointInNode = function(point, node) {
+DefaultDisplay.prototype.isPointInNode = function(point, node) {
 	/*
 	 * var result; this.context.save(); this.drawPath(node); result =
 	 * this.context.isPointInPath(point.x, point.y); this.context.restore();
@@ -373,7 +373,7 @@ DefaultRenderer.prototype.isPointInNode = function(point, node) {
  * Place the center of the specified point in the scene at the center
  * of the viewing area.
  */
-DefaultRenderer.prototype.lookAt = function(point) {
+DefaultDisplay.prototype.lookAt = function(point) {
   var centerX = this.context.canvas.width / 2;
   var centerY = this.context.canvas.height / 2;
   this.offset.x = (centerX - point.x);
@@ -389,7 +389,7 @@ DefaultRenderer.prototype.lookAt = function(point) {
  *
  * @param list
  */
-DefaultRenderer.topMost = function(list) {
+DefaultDisplay.topMost = function(list) {
   if ((list == undefined) || (list.length < 0)) {
     return null;
   } else {
