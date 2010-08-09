@@ -44,7 +44,7 @@ h2 {
 }
 ul, li {
   list-style: none;
-  margin: 0;
+  margin: 0 1.5em 0 0;
   padding: 0;
 }
 
@@ -99,6 +99,7 @@ Style.Scene.background = "040507";
       <option value="circular-layout">Circular</option>
       </select>
       <input type="button" value="Start/Stop" onclick="toggle()" />
+      <input type="button" value="Save Image" onclick="saveCanvas()" />
       <ul class="compact">
 	      <li>      
 		      <label for="zoom">Zoom</label>
@@ -323,7 +324,9 @@ $(function() {
 
 });
 
-
+function saveCanvas() {
+	g.save();
+}
 
 --></script>
 </body>
