@@ -32,8 +32,12 @@ h2 {
 #controls .ui-slider {
 	height: 10px;
 }
-#controls input {
-  display: none;
+#controls input[type="text"] {
+  width: 5em;
+  font-size: 1.8em;
+  border: none;
+}
+#controls .text {
 }
 #controls input[type="button"] {
   display: inline;
@@ -46,7 +50,8 @@ ul, li {
 
 ul.compact li {
   float:left;
-  margin-right: 1em
+  margin-right: 1em;
+  width: 15em;
 }
 
 fieldset {
@@ -97,18 +102,18 @@ Style.Scene.background = "040507";
       <ul class="compact">
 	      <li>      
 		      <label for="zoom">Zoom</label>
+		      <input id="zoom" type="text">
 		      <div id="zoomSlider" class="slider"></div>
-		      <input id="zoom">
 	      </li>	      	
 		  <li>      
 		      <label for="size">Size</label>
+		      <input id="size" type="text">
 		      <div id="sizeSlider" class="slider"></div>
-		      <input id="size">
 	      </li>
 		  <li>      
 		      <label for="depth">Depth</label>
+		      <input id="depth" type="text">
 		      <div id="depthSlider" class="slider"></div>
-		      <input id="depth">
 	      </li>
       </ul>
       	
@@ -118,27 +123,22 @@ Style.Scene.background = "040507";
 
 		<li>
 	      <label for="repulsiveForce">Repulsion</label>
-	      <input id="repulsiveForce" name="repulsiveForce">
+	      <input id="repulsiveForce" name="repulsiveForce" type="text">
 	      <div id="repulsiveForceSlider" class="slider"></div>
 		</li>
 		
 		<li>
 	      <label for="attractiveForce">Attraction</label>
-	      <input id="attractiveForce">
+	      <input id="attractiveForce" type="text">
 	      <div id="attractiveForceSlider" class="slider"></div>
 		</li>
 		
 		<li>
 	      <label for="attractiveEquilibrium">Equilibrium</label>
-	      <input id="attractiveEquilibrium">
+	      <input id="attractiveEquilibrium" type="text">
 	      <div id="attractiveEquilibriumSlider" class="slider"></div>
 		</li>
 		      
-    	<li>
-	      <input id="maximumChildren">
-	      <input id="maximumAncestors">
-		</li>
-
       </ul>
     </fieldset>
   
@@ -152,9 +152,6 @@ Style.Scene.background = "040507";
 <li class="done">Click and drag a node to move it, this will also make it temporarily immune to layout forces.</li>
 <li class="done">Click and drag the background to pan</li>
 <li class="done">Double click a node to show/hide it's children.</li> 
-<li class="done">One node selected at a time.</li> 
-<li class="done">Detect node selection event.</li>
-<li>TODO: Detect edge selection event.</li>
 </ul>
 
 <script  type="text/javascript"><!--
@@ -195,8 +192,13 @@ Style.DarkRed = {
 	stroke: 'rgba(155,0,0,0.75)'
 };
 
-g.nodes.foo.style = Style.Red;
-g.nodes.phee.style = Style.DarkRed;
+Style.Gold = {
+  fill: '8C5F32',
+  stroke: '4C331B'
+}
+
+g.nodes.foo.style = Style.Gold;
+g.nodes.phee.style = Style.Gold;
 
 g.onNodeSelect(function (node) {
 //	console.log(node.id);
