@@ -1,0 +1,5 @@
+# First combine source files
+sprocketize --asset-root=build *.js > build/reviz.js
+
+# Now concatenate them
+java -jar lib/yuicompressor-2.4.2.jar build/reviz.js > build/reviz.min.js
