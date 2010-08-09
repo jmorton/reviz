@@ -32,7 +32,7 @@ Node.prototype.getWeight = function(node) {
  * @returns
  */
 Node.prototype.traverse = function(accumulator, limit, depth) {
-	
+
 	// Don't overwrite nodes that have already been visited
 	if (accumulator[this.id] == undefined) {
 		accumulator[this.id] = this;
@@ -43,7 +43,8 @@ Node.prototype.traverse = function(accumulator, limit, depth) {
 		}
 		if (limit > 0 && true && this.expanded()) {
 			for (ix in this.adjacent) {
-				accumulator = this.adjacent[ix].traverse(accumulator, limit-1, depth+1);
+				accumulator = this.adjacent[ix].traverse(accumulator,
+						limit - 1, depth + 1);
 			}
 		}
 	}
@@ -67,13 +68,14 @@ Node.prototype.expanded = function() {
 };
 
 Node.prototype.toggle = function() {
-	this._collapsed = ! this._collapsed;
+	this._collapsed = !this._collapsed;
 };
 
 /**
- * True if the node is collapsed and has children.  Useful for determining
- * if something should indicate that it can be expanded.  Of course, nodes
- * without children can't be expanded.
+ * True if the node is collapsed and has children. Useful for determining if
+ * something should indicate that it can be expanded. Of course, nodes without
+ * children can't be expanded.
+ * 
  * @returns {Boolean}
  */
 Node.prototype.isHidingChildren = function() {

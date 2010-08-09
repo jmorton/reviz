@@ -1,5 +1,5 @@
 /**
- * Component for abstracting the layout of the graph.  Very basic tiled layout.
+ * Component for abstracting the layout of the graph. Very basic tiled layout.
  * 
  * @param graph
  * @returns
@@ -14,15 +14,15 @@ DefaultLayout.prototype.layout = function() {
 	var wrapAt = increment * this.width;
 	var row = 0;
 	var col = 0;
-	
+
 	for (ix in this.graph.reachable) {
 		this.graph.reachable[ix].x = col;
 		this.graph.reachable[ix].y = row;
 		col += increment;
 		if (col > wrapAt) {
-		  row += increment;
-		  col  = 0;
+			row += increment;
+			col = 0;
 		}
 	}
-	
+
 };

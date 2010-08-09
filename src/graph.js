@@ -1,6 +1,6 @@
 /**
  * @author Jon Morton (jon.morton@gmail.com)
- *
+ * 
  */
 function Graph(canvasId) {
 	this.nodes = {};
@@ -14,39 +14,38 @@ function Graph(canvasId) {
 }
 
 Graph.prototype = {
-	setCanvas: function(id) {
+	setCanvas : function(id) {
 		this.canvas = document.getElementById(id);
 	},
-	getCanvas: function() {
+	getCanvas : function() {
 		return this.canvas;
 	},
-	setLayout: function(value) {
+	setLayout : function(value) {
 		this.layoutWith = new value(this);
 	},
-	getLayout: function() {
+	getLayout : function() {
 		return this.layoutWith;
 	},
-	setDisplay: function(value) {
+	setDisplay : function(value) {
 		this.display = new value(this);
 	},
-	getDisplay: function() {
+	getDisplay : function() {
 		return this.display;
 	},
-	setDepth: function(value) {
+	setDepth : function(value) {
 		this._depth = value;
 		this.cacheReachableNodes();
 	},
-	getDepth: function() {
+	getDepth : function() {
 		return this._depth;
 	},
-	setTheme: function (theme) {
+	setTheme : function(theme) {
 		this.theme = new theme(this);
 	},
-	getTheme: function () {
+	getTheme : function() {
 		return this.theme;
 	}
 };
-
 
 /**
  * Puts a node into the graph.
@@ -56,29 +55,30 @@ Graph.prototype = {
  */
 Graph.prototype.add = function() {
 	var node;
-	
+
 	for (i = 0; i < arguments.length; i++) {
 		node = new Node(arguments[i]);
 		if (this.nodes[node.id] == undefined) {
 			this.nodes[node.id] = node;
 		}
 	}
-	
+
 	if (this.rootNode == undefined) {
 		this.rootNode = node;
 	}
-	
+
 	// Any time a node is added to the graph, we need to determine
-	// if the node can be reached.  Revisit this approach if
-	// performance becomes an issue.  Right now, the entire graph
+	// if the node can be reached. Revisit this approach if
+	// performance becomes an issue. Right now, the entire graph
 	// is recalculated.
 	this.cacheReachableNodes();
-	
+
 	return this;
 };
 
 /**
- * Associates two nodes.  An edge will be drawn between these two nodes.
+ * Associates two nodes. An edge will be drawn between these two nodes.
+ * 
  * @param node1
  * @param node2
  * @returns
@@ -86,8 +86,8 @@ Graph.prototype.add = function() {
 Graph.prototype.connect = function(parentNodeId) {
 	var parentNode = this.nodes[parentNodeId];
 	var childNode;
-	
-	for (i = arguments.length-1; i >= 0; i--) {
+
+	for (i = arguments.length - 1; i >= 0; i--) {
 		// Attempt to create a node if it doesn't exist.
 		// This is for convenience during development,
 		// it might make sense to drop this functionality
@@ -103,19 +103,21 @@ Graph.prototype.connect = function(parentNodeId) {
 		// are formed.
 		parentNode.connect(childNode);
 		childNode.connect(parentNode);
-		this.edges.push([parentNode,childNode]);
-		this.edges.push([childNode,parentNode]);
+		this.edges.push( [ parentNode, childNode ]);
+		this.edges.push( [ childNode, parentNode ]);
 	}
-	
+
 	this.cacheReachableNodes();
-	
+
 	return this;
 };
 
 Graph.prototype.nodeCount = function() {
-  var count = 0;
-  for (key in this.nodes) if (this.reachable.hasOwnProperty(key)) count++;
-  return count;
+	var count = 0;
+	for (key in this.nodes)
+		if (this.reachable.hasOwnProperty(key))
+			count++;
+	return count;
 };
 
 Graph.prototype.applyDisplay = function() {
@@ -156,7 +158,7 @@ Graph.prototype.visibleNodes = function() {
 };
 
 Graph.prototype.eachPair = function(curry) {
-	// this isn't right.  it's doing each pair twice.
+	// this isn't right. it's doing each pair twice.
 	var node1, node2;
 	for (i1 in this.reachable) {
 		node1 = this.reachable[i1];
@@ -180,32 +182,32 @@ Graph.prototype.eachEdge = function(curry) {
 };
 
 /**
- * Any time the selected node changes, a node is connected or disconnected,
- * the visible nodes should be recalculated.
+ * Any time the selected node changes, a node is connected or disconnected, the
+ * visible nodes should be recalculated.
  */
 Graph.prototype.cacheReachableNodes = function() {
 	if ((this.nodes == undefined) || (this.rootNode == undefined)) {
 		this.reachable = [];
 		return [];
 	}
-	
+
 	// Mark all nodes as unreachable.
-	for(ix in this.nodes) {
+	for (ix in this.nodes) {
 		this.nodes[ix].reachable = false;
 	}
-	
+
 	// If the depth is actually specified then traverse, otherwise we assume
 	// all nodes should be displayed.
 	if (this.getDepth() >= 0) {
-	  this.reachable = this.rootNode.traverse({}, this.getDepth());
-  } else {
-    this.reachable = this.nodes;
-  }
-	
-	for(ix in this.reachable) {
+		this.reachable = this.rootNode.traverse( {}, this.getDepth());
+	} else {
+		this.reachable = this.nodes;
+	}
+
+	for (ix in this.reachable) {
 		this.nodes[ix].reachable = true;
 	}
-	
+
 	return this.reachable;
 };
 
@@ -222,14 +224,14 @@ Graph.prototype.onNodeSelect = function(callback) {
 Graph.prototype.save = function() {
 	var mime = 'image/octet-stream';
 	var data = this.display.canvas.toDataURL();
-	document.location.href = data.replace('image/png',mime);
+	document.location.href = data.replace('image/png', mime);
 	return true;
 };
 
 /**
- * Utility function for calculating the magnitude between two
- * points.  It does not handle direction though.
+ * Utility function for calculating the magnitude between two points. It does
+ * not handle direction though.
  */
 Graph.distance = function(p1, p2) {
-	return Math.sqrt(Math.pow(p1.x-p2.x, 2) + Math.pow(p1.y-p2.y, 2));
+	return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 };
