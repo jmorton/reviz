@@ -6,9 +6,10 @@ function Graph(canvasId) {
 	this.nodes = {};
 	this.edges = [];
 	this.setCanvas(canvasId);
-	this.setLayout(new DefaultLayout(this));
-	this.setDisplay(new DefaultRenderer(this));
-	this.setDepth(2);
+	this.setLayout(DefaultLayout);
+	this.setDisplay(DefaultRenderer);
+	this.setTheme(DefaultTheme);
+	this.setDepth(10);
 	this.callbacks = {};
 }
 
@@ -20,15 +21,13 @@ Graph.prototype = {
 		return this.canvas;
 	},
 	setLayout: function(value) {
-		this.layoutWith = value;
-		this.layoutWith.graph = this;
+		this.layoutWith = new value(this);
 	},
 	getLayout: function() {
 		return this.layoutWith;
 	},
 	setDisplay: function(value) {
-		this.display = value;
-		this.display.graph = this;
+		this.display = new value(this);
 	},
 	getDisplay: function() {
 		return this.display;
@@ -39,6 +38,12 @@ Graph.prototype = {
 	},
 	getDepth: function() {
 		return this._depth;
+	},
+	setTheme: function (theme) {
+		this.theme = new theme(this);
+	},
+	getTheme: function () {
+		return this.theme;
 	}
 };
 

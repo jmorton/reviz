@@ -228,13 +228,13 @@ function updateLayout() {
   var selectedLayout = document.getElementById('layout').value;
   switch (selectedLayout) {
     case 'force-layout' :
-      g.setLayout(new ForceDirectedLayout(g));
+      g.setLayout(ForceDirectedLayout);
       break;
     case 'circular-layout' :
-      g.setLayout(new CircularLayout(g));
+      g.setLayout(CircularLayout);
       break;
     default :
-      g.setLayout(new DefaultLayout(g));
+      g.setLayout(DefaultLayout);
       break;
   }
   if (!g.display.selection) {
@@ -304,7 +304,7 @@ $(function() {
 		step:  1,
 		slide: function(event, ui) {
 			$("#size").val(ui.value);
-			g.display.nodeSize = ui.value;
+			g.theme.nodeSize = ui.value;
 			g.animate(g);
 		}
 	});

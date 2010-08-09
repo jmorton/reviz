@@ -6,9 +6,10 @@
  * 2. Filling and outlining a shape
  * 3. Drawing a label
  */
-var DefaultTheme = {};
+var DefaultTheme = function (graph) {
+};
 
-DefaultTheme.drawNode = function(node, context) {
+DefaultTheme.prototype.drawNode = function(node, context) {
 	// Drawing a node may shift the canvas around.  Saving and
 	// subsequently restoring the canvas is needed to make the
 	// layout display properly. 
@@ -45,11 +46,11 @@ DefaultTheme.drawNode = function(node, context) {
 	// Center the x/y of the node so that drawing the shape
 	// doesn't have to calculate relative x/y coordinates
 	context.translate(node.x, node.y);
-	DefaultTheme.drawPath(node, context);
+	this.drawPath(node, context);
 	context.stroke();
 	context.fill();
 
-	DefaultTheme.drawLabel(node, context);
+	this.drawLabel(node, context);
 
 	context.restore();
 };
@@ -60,7 +61,7 @@ DefaultTheme.drawNode = function(node, context) {
  * @param node
  * @param context
  */
-DefaultTheme.drawPath = function(node, context) {
+DefaultTheme.prototype.drawPath = function(node, context) {
 	context.beginPath();
 	context.arc(0, 0, Style.Node.size, 0, Math.PI * 2, false);
 	context.closePath();
@@ -72,7 +73,7 @@ DefaultTheme.drawPath = function(node, context) {
  * @param node
  * @param context
  */
-DefaultTheme.drawLabel = function(node, context) {
+DefaultTheme.prototype.drawLabel = function(node, context) {
 
 	if (node.selected) {
 		context.fillStyle = Style.Node.select.fontColor;
@@ -96,7 +97,7 @@ DefaultTheme.drawLabel = function(node, context) {
  * @param node2
  * @param context
  */
-DefaultTheme.drawEdge = function(node1, node2, context) {
+DefaultTheme.prototype.drawEdge = function(node1, node2, context) {
 	context.save();
 	context.beginPath();
 	if (node1.selected || node2.selected) {

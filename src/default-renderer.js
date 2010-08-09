@@ -22,8 +22,6 @@ function DefaultRenderer(graph) {
 	// The node that the cursor is over
 	this.setHovered(null);
 	
-	this.setTheme(DefaultTheme);
-	
 	// The node that is being dragged
 	this.dragged = null;
 	
@@ -78,12 +76,6 @@ DefaultRenderer.prototype = {
 	},
 	getHovered: function() {
 		return this.hovered;
-	},
-	setTheme: function (theme) {
-		this.theme = theme;
-	},
-	getTheme: function () {
-		return this.theme;
 	}
 };
 
@@ -119,19 +111,19 @@ DefaultRenderer.prototype.draw = function() {
 		for (i2 in fromNode.adjacent) {
 			var toNode = fromNode.adjacent[i2];
 			if (fromNode.reachable && toNode.reachable) {
-				this.theme.drawEdge(fromNode, toNode, this.context);
+				this.graph.theme.drawEdge(fromNode, toNode, this.context);
 			}
 		}
 	}
 	
 	// Draw reachable nodes
 	for (index in this.graph.reachable) {
-		this.theme.drawNode(this.graph.nodes[index], this.context);
+		this.graph.theme.drawNode(this.graph.nodes[index], this.context);
 	}
 	
 	// Draw hovered nodes
 	if (this.hovered) {
-		this.theme.drawNode(this.hovered, this.context);
+		this.graph.theme.drawNode(this.hovered, this.context);
 	}
 	
 	this.context.restore();
