@@ -29,21 +29,33 @@ ForceDirectedLayout.prototype.layout = function() {
 
 // this refers to the display
 ForceDirectedLayout.repel = function(attractor, attracted) {
+	var f;
+
 	if ((this.dragged == attractor) || (this.selection == attractor)) {
 		return false;
 	}
-	attractor.add(repulsiveForce(attractor, attracted,
-			ForceDirectedLayout.repulsiveForce));
+
+	f = ForceDirectedLayout.force(attractor, attracted, function(magnitude) {
+		return ForceDirectedLayout.repulsiveForce / magnitude;
+	});
+
+	attractor.add(f);
 };
 
 // this refers to the display.
 ForceDirectedLayout.attract = function(attractor, attracted) {
+	var f;
+
 	if ((this.dragged == attracted) || (this.selection == attracted)) {
 		return false;
 	}
-	attracted.add(springForce(attractor, attracted,
-			ForceDirectedLayout.attractiveForce,
-			ForceDirectedLayout.equilibrium));
+
+	f = ForceDirectedLayout.force(attractor, attracted, function(magnitude) {
+		return -(ForceDirectedLayout.equilibrium - magnitude)
+				* ForceDirectedLayout.attractiveForce;
+	});
+
+	attracted.add(f);
 };
 
 /**
@@ -51,6 +63,7 @@ ForceDirectedLayout.attract = function(attractor, attracted) {
  * 
  * @return [float] Euclidean distance
  */
+
 ForceDirectedLayout.distance = function(p1, p2) {
 	return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 };
@@ -65,53 +78,8 @@ ForceDirectedLayout.angle = function(p1, p2) {
 	return Math.atan((p1.y - p2.y) / (p1.x - p2.x));
 };
 
-/**
- * Calculates the vector of force between two points
- * 
- * @param p1
- * @param p2
- * @param spring
- * @param equilibrium
- * @returns {Vector}
- */
-function springForce(p1, p2, spring, equilibrium) {
-
+ForceDirectedLayout.force = function(p1, p2, curry) {
 	var magnitude = ForceDirectedLayout.distance(p1, p2);
-	var theta = ForceDirectedLayout.angle(p1, p2);
-
-	if (magnitude < equilibrium) {
-		return {
-			x : 0,
-			y : 0
-		};
-	}
-
-	var delta = -(equilibrium - magnitude) * spring;
-
-	var dx = delta * Math.cos(theta);
-	var dy = delta * Math.sin(theta);
-
-	if (p1.x < p2.x) {
-		dx = -dx;
-		dy = -dy;
-	}
-
-	return {
-		x : dx,
-		y : dy
-	};
-
-}
-
-/**
- * 
- * @param p1
- * @param p2
- * @returns {x:,y:}
- */
-function repulsiveForce(p1, p2, force) {
-
-	var magnitude = (force / ForceDirectedLayout.distance(p1, p2)) * 0.6;
 	var theta = ForceDirectedLayout.angle(p1, p2);
 
 	if (magnitude < 0.1) {
@@ -121,8 +89,9 @@ function repulsiveForce(p1, p2, force) {
 		};
 	}
 
-	var dx = magnitude * Math.cos(theta);
-	var dy = magnitude * Math.sin(theta);
+	var delta = curry(magnitude);
+	var dx = delta * Math.cos(theta);
+	var dy = delta * Math.sin(theta);
 
 	if (p1.x < p2.x) {
 		dx = -dx;
