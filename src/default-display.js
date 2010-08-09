@@ -1,47 +1,47 @@
 /**
  * Component for abstracting the rendering of the graph.
- *
+ * 
  * @param graph
  * @returns {DefaultDisplay}
  */
 function DefaultDisplay(graph) {
-  
-  // The renderer needs to be able to reference the graph
-  // so that it can access node data.
+
+	// The renderer needs to be able to reference the graph
+	// so that it can access node data.
 	this.setGraph(graph);
-	
-	// A default node size (radius) used for drawing nodes.
-	this.nodeSize = 20;
-	
+
 	// Scale is used to keep track of zoom-in and zoom-out
 	this.scale = 1.0;
-	
+
 	// Offset is used to keep track of panning
-	this.offset = { x: 0, y: 0 };
-	
+	this.offset = {
+		x : 0,
+		y : 0
+	};
+
 	// The node that the cursor is over
 	this.setHovered(null);
-	
+
 	// The node that is being dragged
 	this.dragged = null;
-	
+
 	// Keep track of whether or not dragging is currently happening
 	this.dragging = false;
-	
+
 	// Setup mouse (and eventually other) listeners/handlers
 	this.listen();
 };
 
 DefaultDisplay.prototype = {
-	setGraph: function(value) {
+	setGraph : function(value) {
 		this.graph = value;
 		this.canvas = value.canvas;
 		this.context = value.canvas.getContext('2d');
 	},
-	getGraph: function() {
+	getGraph : function() {
 		return this.graph;
 	},
-	setSelection: function(value) {
+	setSelection : function(value) {
 		// Don't handle the selection unless what is selected
 		// is actually a new value.
 		if (this.selection == value) {
@@ -56,10 +56,10 @@ DefaultDisplay.prototype = {
 			this.graph.handleEvent('select', this.selection);
 		}
 	},
-	getSelection: function() {
+	getSelection : function() {
 		return this.selection;
 	},
-	setHovered: function(value) {
+	setHovered : function(value) {
 		// Don't handle the selection unless what is selected
 		// is actually a new value.
 		if (this.hovered == value) {
@@ -74,7 +74,7 @@ DefaultDisplay.prototype = {
 			this.graph.handleEvent('select', this.hovered);
 		}
 	},
-	getHovered: function() {
+	getHovered : function() {
 		return this.hovered;
 	}
 };
@@ -86,9 +86,10 @@ DefaultDisplay.prototype = {
  */
 DefaultDisplay.prototype.blank = function() {
 	this.context.save();
-	this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+	this.context.clearRect(0, 0, this.context.canvas.width,
+			this.context.canvas.height);
 	this.context.fillStyle = Style.Scene.background;
-	this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
+	this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	this.context.restore();
 };
 
@@ -100,11 +101,11 @@ DefaultDisplay.prototype.blank = function() {
  */
 DefaultDisplay.prototype.draw = function() {
 	this.context.save();
-	
+
 	// Move the canvas to wherever it has been dragged.
 	this.context.translate(this.offset.x, this.offset.y);
 	this.context.scale(this.scale, this.scale);
-	
+
 	// Draw edges between reachable nodes
 	for (index in this.graph.reachable) {
 		var fromNode = this.graph.reachable[index];
@@ -115,17 +116,17 @@ DefaultDisplay.prototype.draw = function() {
 			}
 		}
 	}
-	
+
 	// Draw reachable nodes
 	for (index in this.graph.reachable) {
 		this.graph.theme.drawNode(this.graph.nodes[index], this.context);
 	}
-	
+
 	// Draw hovered nodes
 	if (this.hovered) {
 		this.graph.theme.drawNode(this.hovered, this.context);
 	}
-	
+
 	this.context.restore();
 
 	return this;
@@ -144,11 +145,11 @@ DefaultDisplay.prototype.redraw = function() {
  */
 DefaultDisplay.prototype.listen = function() {
 	var renderer = this;
-	
+
 	this.canvas.addEventListener('mousedown', function(event) {
 		renderer.startDragging(event);
 	}, false);
-	
+
 	this.canvas.addEventListener('mouseup', function(event) {
 		if (renderer.noDragDetected) {
 			renderer.makeSelection(event);
@@ -156,7 +157,7 @@ DefaultDisplay.prototype.listen = function() {
 		renderer.stopDragging(event);
 		renderer.redraw();
 	}, false);
-	
+
 	this.canvas.addEventListener('mousemove', function(event) {
 		if (renderer.dragging) {
 			if (renderer.dragged == null) {
@@ -167,73 +168,71 @@ DefaultDisplay.prototype.listen = function() {
 		} else {
 			renderer.hovering(event);
 		}
-		// Only redraw if the graph is not playing.  Otherwise,
+		// Only redraw if the graph is not playing. Otherwise,
 		// performance will suffer during mouse over.
 		if (!renderer.graph.isPlaying()) {
 			renderer.redraw();
 		}
 	}, false);
-	
+
 	this.canvas.addEventListener('dblclick', function(event) {
 		var target = DefaultDisplay.topMost(renderer.containing(event));
-		
+
 		// Expand or collapse a node...
 		if (target != null) {
 			target.toggle();
 			renderer.graph.cacheReachableNodes();
-			
-		// Start/stop animation...
+
+			// Start/stop animation...
 		} else {
 			if (renderer.graph.isPlaying()) {
 				renderer.graph.stop();
 			} else {
 				renderer.graph.start();
-			}			
+			}
 		}
 	}, false);
-	
+
 	// Mozilla handles mouse events differently than webkit.
 	if (window.addEventListener) {
-		
-		this.canvas.addEventListener('DOMMouseScroll', 
-			function(event) {
-				var delta = event.detail * 10;
-				renderer.zoom(delta);
-				renderer.redraw();
-				DefaultDisplay.cancelEvent(event);
+
+		this.canvas.addEventListener('DOMMouseScroll', function(event) {
+			var delta = event.detail * 10;
+			renderer.zoom(delta);
+			renderer.redraw();
+			DefaultDisplay.cancelEvent(event);
 		}, false);
-		
-		this.canvas.addEventListener('mousewheel',
-			function() {
-				var delta = event.wheelDelta;
-				renderer.zoom(delta);
-				renderer.redraw();
-				DefaultDisplay.cancelEvent(event);
-			}, false);
-		
+
+		this.canvas.addEventListener('mousewheel', function() {
+			var delta = event.wheelDelta;
+			renderer.zoom(delta);
+			renderer.redraw();
+			DefaultDisplay.cancelEvent(event);
+		}, false);
+
 	}
 };
 
 DefaultDisplay.cancelEvent = function(event) {
 	// jaG.
-    event = event ? event : window.event;
-    
-    if (event.stopPropagation) {
-        event.stopPropagation();    
-    }
-    if (event.preventDefault) {
-        event.preventDefault();
-    }
-    event.cancelBubble = true;
-    event.cancel = true;
-    event.returnValue = false;
-    
-    return false;
+	event = event ? event : window.event;
+
+	if (event.stopPropagation) {
+		event.stopPropagation();
+	}
+	if (event.preventDefault) {
+		event.preventDefault();
+	}
+	event.cancelBubble = true;
+	event.cancel = true;
+	event.returnValue = false;
+
+	return false;
 };
 
 /**
  * Determine the "top most" node and make it the current selection.
- *
+ * 
  * @param e
  */
 DefaultDisplay.prototype.makeSelection = function(e) {
@@ -242,30 +241,31 @@ DefaultDisplay.prototype.makeSelection = function(e) {
 
 /**
  * Determine the "top most" node and make it the node being dragged.
- *
+ * 
  * @param e
  */
 DefaultDisplay.prototype.startDragging = function(e) {
 	this.lastPoint = e;
-	this.dragging  = true;
-	this.dragged   = DefaultDisplay.topMost(this.containing(e));
+	this.dragging = true;
+	this.dragged = DefaultDisplay.topMost(this.containing(e));
 	this.noDragDetected = true;
 };
 
 /**
  * Release the node being dragged.
+ * 
  * @param e
  */
 DefaultDisplay.prototype.stopDragging = function(e) {
-	this.dragging  = false;
+	this.dragging = false;
 	this.actuallyDragged = false;
 	this.lastPoint = null;
-	this.dragged   = null;
+	this.dragged = null;
 };
 
 /**
  * Pan the scene without actually moving any nodes.
- *
+ * 
  * @param e
  */
 DefaultDisplay.prototype.dragScene = function(e) {
@@ -279,7 +279,7 @@ DefaultDisplay.prototype.dragScene = function(e) {
 
 /**
  * Move nodes within the scene.
- *
+ * 
  * @param e
  */
 DefaultDisplay.prototype.dragNode = function(e) {
@@ -290,9 +290,9 @@ DefaultDisplay.prototype.dragNode = function(e) {
 };
 
 /**
- * Determine the "top most" node being hovered so that it can be
- * highlighted during drawing.
- *
+ * Determine the "top most" node being hovered so that it can be highlighted
+ * during drawing.
+ * 
  * @param e
  */
 DefaultDisplay.prototype.hovering = function(e) {
@@ -306,20 +306,20 @@ DefaultDisplay.prototype.hovering = function(e) {
 };
 
 /**
- * Zoom in or out a linear amount relative to the delta.  This is capped
- * by a zoom factor of 1/4 up to 5x.
- *
+ * Zoom in or out a linear amount relative to the delta. This is capped by a
+ * zoom factor of 1/4 up to 5x.
+ * 
  * @param delta
  */
 DefaultDisplay.prototype.zoom = function(delta) {
 	this.scale += 0.001 * delta;
-	this.scale = Math.max( this.scale, 0.1 );
-	this.scale = Math.min( this.scale, 2.5 );
+	this.scale = Math.max(this.scale, 0.1);
+	this.scale = Math.min(this.scale, 2.5);
 };
 
 /**
  * Find all of the nodes that contain the point contained by the event.
- *
+ * 
  * @param event
  */
 DefaultDisplay.prototype.containing = function(event) {
@@ -330,7 +330,7 @@ DefaultDisplay.prototype.containing = function(event) {
 			nodes[nodes.length] = this.graph.reachable[index];
 		}
 	}
-	
+
 	return nodes;
 };
 
@@ -343,8 +343,10 @@ DefaultDisplay.prototype.containing = function(event) {
  */
 DefaultDisplay.prototype.relativePoint = function(event) {
 	return {
-		x: ((event.pageX - event.target.offsetLeft) - this.offset.x) / this.scale,
-		y: ((event.pageY - event.target.offsetTop) - this.offset.y) / this.scale
+		x : ((event.pageX - event.target.offsetLeft) - this.offset.x)
+				/ this.scale,
+		y : ((event.pageY - event.target.offsetTop) - this.offset.y)
+				/ this.scale
 	};
 };
 
@@ -352,7 +354,7 @@ DefaultDisplay.prototype.relativePoint = function(event) {
  * Create the node path and determine if it actually contains the specified
  * point. The renderer should handle this because the node doesn't know how to
  * draw itself.
- *
+ * 
  * @param point
  * @param node
  */
@@ -363,37 +365,36 @@ DefaultDisplay.prototype.isPointInNode = function(point, node) {
 	 * return result;
 	 */
 	var result;
-	
+
 	result = Graph.distance(point, node) < (this.nodeSize);
-	
+
 	return result;
 };
 
 /**
- * Place the center of the specified point in the scene at the center
- * of the viewing area.
+ * Place the center of the specified point in the scene at the center of the
+ * viewing area.
  */
 DefaultDisplay.prototype.lookAt = function(point) {
-  var centerX = this.context.canvas.width / 2;
-  var centerY = this.context.canvas.height / 2;
-  this.offset.x = (centerX - point.x);
-  this.offset.y = (centerY - point.y);
-  this.redraw();
+	var centerX = this.context.canvas.width / 2;
+	var centerY = this.context.canvas.height / 2;
+	this.offset.x = (centerX - point.x);
+	this.offset.y = (centerY - point.y);
+	this.redraw();
 };
 
 /**
- * Get the "top most" node in a list.  Right now, this is just the last
- * node because of the way drawing and containment occurs.  The #containing
- * function iterates over all the reachable nodes in order.  If this
- * changes, then topMost will need to be reworked.
- *
+ * Get the "top most" node in a list. Right now, this is just the last node
+ * because of the way drawing and containment occurs. The #containing function
+ * iterates over all the reachable nodes in order. If this changes, then topMost
+ * will need to be reworked.
+ * 
  * @param list
  */
 DefaultDisplay.topMost = function(list) {
-  if ((list == undefined) || (list.length < 0)) {
-    return null;
-  } else {
-    return list[list.length-1];
-  }
+	if ((list == undefined) || (list.length < 0)) {
+		return null;
+	} else {
+		return list[list.length - 1];
+	}
 };
-
