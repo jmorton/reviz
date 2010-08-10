@@ -28,18 +28,18 @@ ForceDirectedLayout.prototype.layout = function() {
 };
 
 // this refers to the display
-ForceDirectedLayout.repel = function(attractor, attracted) {
+ForceDirectedLayout.repel = function(repelor, repelee) {
 	var f;
 
-	if ((this.dragged == attractor) || (this.selection == attractor)) {
+	if ((this.dragged == repelor) || (this.selection == repelor)) {
 		return false;
 	}
 
-	f = ForceDirectedLayout.force(attractor, attracted, function(magnitude) {
+	f = ForceDirectedLayout.force(repelor, repelee, function(magnitude) {
 		return ForceDirectedLayout.repulsiveForce / magnitude;
 	});
 
-	attractor.add(f);
+	repelor.add(f);
 };
 
 // this refers to the display.

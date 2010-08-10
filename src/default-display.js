@@ -19,8 +19,8 @@ function DefaultDisplay(graph) {
 		y : 0
 	};
 
-  this.nodeSize = Style.Node.size;
-  
+	this.nodeSize = Style.Node.size;
+
 	// The node that the cursor is over
 	this.setHovered(null);
 
@@ -327,6 +327,17 @@ DefaultDisplay.prototype.zoom = function(delta) {
 DefaultDisplay.prototype.containing = function(event) {
 	var relativePoint = this.relativePoint(event);
 	var nodes = [];
+
+	// An optimization... if there is a hovered node and the relative point
+	// is inside the hovered node, no further checking is needed.  This does
+	// ignore other possible nodes 'underneath' the hovered node though.
+	if (this.getHovered()
+			&& this.isPointInNode(relativePoint, this.getHovered())) {
+		return [ this.getHovered() ];
+	}
+
+	// If the number of nodes is large, the amount of calculation may
+	// impact performance.
 	for (index in this.graph.reachable) {
 		if (this.isPointInNode(relativePoint, this.graph.reachable[index])) {
 			nodes[nodes.length] = this.graph.reachable[index];
