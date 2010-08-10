@@ -250,7 +250,7 @@ DefaultDisplay.prototype.startDragging = function(e) {
 	this.lastPoint = e;
 	this.dragging = true;
 	this.dragged = DefaultDisplay.topMost(this.containing(e));
-	this.dragged.dragged = true;
+	if (this.dragged) this.dragged.dragged = true;
 	this.noDragDetected = true;
 };
 
@@ -263,7 +263,7 @@ DefaultDisplay.prototype.stopDragging = function(e) {
 	this.dragging = false;
 	this.actuallyDragged = false;
 	this.lastPoint = null;
-	this.dragged.dragged = false;
+	if (this.dragged) this.dragged.dragged = false;
 	this.dragged = null;
 };
 
