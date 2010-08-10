@@ -157,7 +157,7 @@ Graph.prototype.activeNodes = function() {
 Graph.prototype.visibleNodes = function() {
 };
 
-Graph.prototype.eachPair = function(curry) {
+Graph.prototype.eachPair = function(curry,context) {
 	// this isn't right. it's doing each pair twice.
 	var node1, node2;
 	for (i1 in this.reachable) {
@@ -165,18 +165,18 @@ Graph.prototype.eachPair = function(curry) {
 		for (i2 in this.reachable) {
 			node2 = this.reachable[i2];
 			if (node1 != node2) {
-				curry.call(arguments.caller, node1, node2);
+				curry.call(this.getLayout(), node1, node2);
 			}
 		}
 	}
 	return true;
 };
 
-Graph.prototype.eachEdge = function(curry) {
+Graph.prototype.eachEdge = function(curry,context) {
 	var pair;
 	for (index in this.edges) {
 		pair = this.edges[index];
-		curry.call(arguments.caller, pair[0], pair[1]);
+		curry.call(this.getLayout(), pair[0], pair[1]);
 	}
 	return true;
 };

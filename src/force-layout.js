@@ -1,8 +1,8 @@
 function ForceDirectedLayout(graph) {
 	this.graph = graph;
-	ForceDirectedLayout.attractiveForce = 1.0;
-	ForceDirectedLayout.equilibrium = 100;
-	ForceDirectedLayout.repulsiveForce = 100;
+	this.attractiveForce = 1.0;
+	this.equilibrium = 100;
+	this.repulsiveForce = 100;
 };
 
 /**
@@ -22,43 +22,49 @@ function ForceDirectedLayout(graph) {
  * @returns
  */
 ForceDirectedLayout.prototype.layout = function() {
-	this.graph.eachPair(ForceDirectedLayout.repel);
-	this.graph.eachEdge(ForceDirectedLayout.attract);
+	this.graph.eachPair(this.repel);
+	this.graph.eachEdge(this.attract);
 	return true;
 };
 
-// this refers to the display
-ForceDirectedLayout.repel = function(repelor, repelee) {
-	var f;
+ForceDirectedLayout.prototype.repel = function(repelor, repelee) {
+	var vector, repulsion;
 
 	if (repelor.selected || repelor.dragged) {
 		return false;
 	}
 
-	f = ForceDirectedLayout.force(repelor, repelee, function(magnitude) {
-		return ForceDirectedLayout.repulsiveForce / magnitude;
+	// needed in order to make a property of this available to the
+	// anonymous function passed to force.
+	repulsion = this.repulsiveForce;
+
+	vector = this.force(repelor, repelee, function(magnitude) {
+		return repulsion / magnitude;
 	});
 
-	repelor.add(f);
+	repelor.add(vector);
 };
 
-// this refers to the display.
-ForceDirectedLayout.attract = function(attractor, attracted) {
-	var f;
+ForceDirectedLayout.prototype.attract = function(attractor, attracted) {
+	var vector, equilibrium, attraction;
 
 	if (attracted.selected || attracted.dragged) {
 		return false;
 	}
-
-	f = ForceDirectedLayout.force(attractor, attracted, function(magnitude) {
-		return -(ForceDirectedLayout.equilibrium - magnitude)
-				* ForceDirectedLayout.attractiveForce;
+	
+	// needed in order to make a property of this available to the
+	// anonymous function passed to force.
+	equilibrium = this.equilibrium;
+	attraction = this.attractiveForce;
+	
+	vector = this.force(attractor, attracted, function(magnitude) {
+		return -(equilibrium - magnitude) * attraction;
 	});
 
-	attracted.add(f);
+	attracted.add(vector);
 };
 
-ForceDirectedLayout.force = function(p1, p2, curry) {
+ForceDirectedLayout.prototype.force = function(p1, p2, curry) {
 	var magnitude = Util.distance(p1, p2);
 	var theta = Util.angle(p1, p2);
 
