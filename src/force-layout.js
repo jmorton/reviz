@@ -31,7 +31,7 @@ ForceDirectedLayout.prototype.layout = function() {
 ForceDirectedLayout.repel = function(repelor, repelee) {
 	var f;
 
-	if ((this.dragged == repelor) || (this.selection == repelor)) {
+	if (repelor.selected || repelor.dragged) {
 		return false;
 	}
 
@@ -46,7 +46,7 @@ ForceDirectedLayout.repel = function(repelor, repelee) {
 ForceDirectedLayout.attract = function(attractor, attracted) {
 	var f;
 
-	if ((this.dragged == attracted) || (this.selection == attracted)) {
+	if (attracted.selected || attracted.dragged) {
 		return false;
 	}
 

@@ -165,7 +165,7 @@ Graph.prototype.eachPair = function(curry) {
 		for (i2 in this.reachable) {
 			node2 = this.reachable[i2];
 			if (node1 != node2) {
-				curry.call(this.display, node1, node2);
+				curry.call(arguments.caller, node1, node2);
 			}
 		}
 	}
@@ -176,7 +176,7 @@ Graph.prototype.eachEdge = function(curry) {
 	var pair;
 	for (index in this.edges) {
 		pair = this.edges[index];
-		curry.call(this.display, pair[0], pair[1]);
+		curry.call(arguments.caller, pair[0], pair[1]);
 	}
 	return true;
 };
