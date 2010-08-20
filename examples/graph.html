@@ -252,8 +252,8 @@ Style.DarkRed = {
 };
 
 Style.Gold = {
-  fill: '8C5F32',
-  stroke: '4C331B'
+  fill: 'rgba(130,100,50,0.9)',
+  stroke: 'rgba(130,100,50,0.9)'
 }
 
 g.nodes.foo.style = Style.Gold;
@@ -271,6 +271,7 @@ g.onNodeHovered = function (node) {
 g.layout = new DefaultLayout(g);
 g.applyLayout();
 g.display.lookAt(g.nodes.foo);
+g.display.setSelection(g.nodes.foo);
 
 function toggle() {
 	if (g.isPlaying()) {
@@ -309,7 +310,7 @@ $(function() {
 		step:  1,
 		slide: function(event, ui) {
 			$("#repulsiveForce").val(ui.value);
-			ForceDirectedLayout.repulsiveForce  = ui.value;
+			g.getLayout().repulsiveForce  = ui.value;
 			g.animate(g);
 		}
 	});
@@ -322,7 +323,7 @@ $(function() {
 		step:  0.1,
 		slide: function(event, ui) {
 			$("#attractiveForce").val(ui.value);
-			ForceDirectedLayout.attractiveForce  = ui.value;
+			g.getLayout().attractiveForce  = ui.value;
 			g.animate(g);
 		}
 	});
@@ -335,7 +336,7 @@ $(function() {
 		step:  1,
 		slide: function(event, ui) {
 			$("#attractiveEquilibrium").val(ui.value);
-			ForceDirectedLayout.equilibrium = ui.value;
+			g.getLayout().equilibrium = ui.value;
 			g.animate(g);
 		}
 	});
@@ -361,7 +362,7 @@ $(function() {
 		step:  1,
 		slide: function(event, ui) {
 			$("#size").val(ui.value);
-			g.theme.nodeSize = ui.value;
+			Style.Node.size = ui.value;
 			g.animate(g);
 		}
 	});
