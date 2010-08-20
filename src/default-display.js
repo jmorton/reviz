@@ -53,6 +53,7 @@ DefaultDisplay.prototype = {
 			this.selection.selected = false;
 		}
 		this.selection = value;
+		this.graph.setRoot(this.selection);
 		if (value != undefined) {
 			this.selection.selected = true;
 			this.graph.handleEvent('select', this.selection);
@@ -73,7 +74,7 @@ DefaultDisplay.prototype = {
 		this.hovered = value;
 		if (value != undefined) {
 			this.hovered.hovered = true;
-			this.graph.handleEvent('select', this.hovered);
+			this.graph.handleEvent('hover', this.hovered);
 		}
 	},
 	getHovered : function() {

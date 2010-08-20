@@ -5,65 +5,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Graph on a Canvas</title>
 <style><!--
-* {
-	font-family: 'Droid Sans', 'Lucida Grande', 'Verdana';
-	font-size: 10pt;
-}
-h1 {
-	font-size: 2em;
-}
-h2 {
-	font-size: 1.4em;
-}
-#myGraph {
-	border: 1px solid #ccc;
-}
-.done {
-}
-#controls {
-  padding: 1em 0;
-}
-.slider {
-  width: 10em;
-}
-#controls .ui-slider .ui-slider-handle {
-	width: 0.5em; margin-left: -0.25em;
-}
-#controls .ui-slider {
-	height: 10px;
-}
-#controls input[type="text"] {
-  width: 5em;
-  font-size: 1.8em;
-  border: none;
-}
-#controls .text {
-}
-#controls input[type="button"] {
-  display: inline;
-}
-ul, li {
-  list-style: none;
-  margin: 0 1.5em 0 0;
-  padding: 0;
-}
-
-ul.compact li {
-  float:left;
-  margin-right: 1em;
-  width: 15em;
-}
-
-fieldset {
-  margin: 0.5em 0 1em 0;
-  padding: 0;
-  border: none;
-  clear: both;
-}
 
 --></style>
 <!--[if IE]><script type="text/javascript" src="../js/excanvas.compiled.js"></script><![endif]-->
 
+<link type="text/css" href="default.css" rel="stylesheet" />
 <link type="text/css" href="../css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" />	
 <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../js/jquery-ui-1.8.4.custom.min.js"></script>
@@ -77,10 +23,6 @@ fieldset {
 <script type="text/javascript" src="../src/node.js"></script>
 <script type="text/javascript" src="../src/util.js"></script>
 
-<script>
-Style.Scene.background = "040507";
-</script>
-
 </head>
 
 <body>
@@ -89,12 +31,14 @@ Style.Scene.background = "040507";
 
 <canvas id="myGraph" width="900" height="450"></canvas>
 
+<iframe id="myView" width="900" height="200"></iframe>
+
 <div id="controls">
 
 <form>
 	<fieldset>
       <label for="layout">Layout</label>
-      <select id="layout" name="layout" onchange="updateLayout()">
+      <select id="layout" name="layout">
       <option value="default">Tile Based</option>
       <option value="force-layout">Force Directed</option>
       <option value="circular-layout">Circular</option>
@@ -156,111 +100,18 @@ Style.Scene.background = "040507";
 <li class="done">Double click a node to show/hide it's children.</li> 
 </ul>
 
+<script type="text/javascript" src="data.js"></script>
+<script type="text/javascript" src="controls.js"></script>
+
 <script  type="text/javascript"><!--
 
-var g = new Graph('myGraph');
-g.add('foo');
-g.connect('foo', 'bar', 'baz', 'grault','zork');
-g.connect('grault', 'qux','quux');
-g.connect('zork','smee','prosser','gru','phee','bor');
-g.connect('foo','a');
-g.connect('foo','a1');
-g.connect('foo','a2');
-g.connect('foo','a3');
-
-g.connect('a','b');
-g.connect('b','c');
-g.connect('c','d');
-g.connect('d','e');
-g.connect('e','f');
-g.connect('f','g');
-g.connect('g','h');
-g.connect('h','i');
-g.connect('i','j');
-g.connect('j','k');
-g.connect('k','l');
-g.connect('l','m');
-g.connect('f','n');
-g.connect('g','n');
-g.connect('h','n');
-g.connect('i','n');
-g.connect('j','n');
-g.connect('a1','b1');
-g.connect('b1','c1');
-g.connect('c1','d1');
-g.connect('d1','e1');
-g.connect('e1','f1');
-g.connect('f1','g1');
-g.connect('g1','h1');
-g.connect('h1','i1');
-g.connect('i1','j1');
-g.connect('j1','k1');
-g.connect('k1','l1');
-g.connect('l1','m1');
-g.connect('f1','n1');
-g.connect('g1','n1');
-g.connect('h1','n1');
-g.connect('i1','n1');
-g.connect('j1','n1');
-
-g.connect('a2','b2');
-g.connect('b2','c2');
-g.connect('c2','d2');
-g.connect('d2','e2');
-g.connect('e2','f2');
-g.connect('f2','g2');
-g.connect('g2','h2');
-g.connect('h2','i2');
-g.connect('i2','j2');
-g.connect('j2','k2');
-g.connect('k2','l2');
-g.connect('l2','m2');
-g.connect('f2','n2');
-g.connect('g2','n2');
-g.connect('h2','n2');
-g.connect('i2','n2');
-g.connect('j2','n2');
-
-g.connect('a3','b3');
-g.connect('b3','c3');
-g.connect('c3','d3');
-g.connect('d3','e3');
-g.connect('e3','f3');
-g.connect('f3','g3');
-g.connect('g3','h3');
-g.connect('h3','i3');
-g.connect('i3','j3');
-g.connect('j3','k3');
-g.connect('k3','l3');
-g.connect('l3','m3');
-g.connect('f3','n3');
-g.connect('g3','n3');
-g.connect('h3','n3');
-g.connect('i3','n3');
-g.connect('j3','n3');
-
-Style.Scene.background = 'rgb(128,128,128)';
-
-Style.Red = {
-	fill:   'rgba(225,0,0,0.9)',
-	stroke: 'rgba(225,0,0,0.75)'
-};
-
-Style.DarkRed = {
-	fill:   'rgba(155,0,0,0.9)',
-	stroke: 'rgba(155,0,0,0.75)'
-};
-
-Style.Gold = {
-  fill: 'rgba(130,100,50,0.9)',
-  stroke: 'rgba(130,100,50,0.9)'
-}
-
-g.nodes.foo.style = Style.Gold;
-g.nodes.phee.style = Style.Gold;
+g.nodes.foo.style = Style.Brown;
+g.nodes.phee.style = Style.Brown;
+g.nodes.a1.style = Style.Blue;
+g.nodes.b1.style = Style.Blue;
 
 g.onNodeSelect(function (node) {
-//	console.log(node.id);
+  changeViewer(node);
 });
 
 g.onNodeHovered = function (node) {
@@ -273,115 +124,8 @@ g.applyLayout();
 g.display.lookAt(g.nodes.foo);
 g.display.setSelection(g.nodes.foo);
 
-function toggle() {
-	if (g.isPlaying()) {
-		g.stop();		
-	} else {
-		g.start();
-	}
-}
 
-function updateLayout() {
-  g.stop();
-  var selectedLayout = document.getElementById('layout').value;
-  switch (selectedLayout) {
-    case 'force-layout' :
-      g.setLayout(ForceDirectedLayout);
-      break;
-    case 'circular-layout' :
-      g.setLayout(CircularLayout);
-      break;
-    default :
-      g.setLayout(DefaultLayout);
-      break;
-  }
-  if (!g.display.selection) {
-    g.display.selection = g.nodes.foo;
-  }
-  g.display.lookAt(g.nodes.foo);
-  g.start();
-}
 
-$(function() {
-	$("#repulsiveForceSlider").slider({
-		value: 100,
-		min:   1,
-		max:   500,
-		step:  1,
-		slide: function(event, ui) {
-			$("#repulsiveForce").val(ui.value);
-			g.getLayout().repulsiveForce  = ui.value;
-			g.animate(g);
-		}
-	});
-	$("#repulsiveForce").val($("#repulsiveForceSlider").slider("value"));
-	
-	$("#attractiveForceSlider").slider({
-		value: 0.5,
-		min:   0.1,
-		max:   1.0,
-		step:  0.1,
-		slide: function(event, ui) {
-			$("#attractiveForce").val(ui.value);
-			g.getLayout().attractiveForce  = ui.value;
-			g.animate(g);
-		}
-	});
-	$("#attractiveForce").val($("#attractiveForceSlider").slider("value"));
-
-	$("#attractiveEquilibriumSlider").slider({
-		value: 20,
-		min:   20,
-		max:   500,
-		step:  1,
-		slide: function(event, ui) {
-			$("#attractiveEquilibrium").val(ui.value);
-			g.getLayout().equilibrium = ui.value;
-			g.animate(g);
-		}
-	});
-	$("#attractiveEquilibrium").val($("#attractiveEquilibriumSlider").slider("value"));
-
-	$("#zoomSlider").slider({
-		value: 1.0,
-		min:   0.1,
-		max:   2.0,
-		step:  0.1,
-		slide: function(event, ui) {
-			$("#zoom").val(ui.value);
-			g.display.scale = ui.value;
-			g.animate(g);
-		}
-	});
-	$("#zoom").val($("#zoomSlider").slider("value"));
-	
-	$("#sizeSlider").slider({
-		value: 25,
-		min:   10,
-		max:   100,
-		step:  1,
-		slide: function(event, ui) {
-			$("#size").val(ui.value);
-			Style.Node.size = ui.value;
-			g.animate(g);
-		}
-	});
-	$("#size").val($("#sizeSlider").slider("value"));
-	
-	$("#depthSlider").slider({
-		value: -1,
-		min:   -1,
-		max:   42,
-		step:  1,
-		slide: function(event, ui) {
-			$("#depth").val(ui.value);
-			g.setDepth(ui.value);
-			g.animate(g);
-		}
-	});
-	$("#depth").val($("#depthSlider").slider("value"));
-
-});
 
 function saveCanvas() {
 	g.save();

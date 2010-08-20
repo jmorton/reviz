@@ -156,3 +156,34 @@ var Style = {
 	}
 
 };
+
+Style.Black = {
+	fill:   'rgba(0,0,0,0.9)',
+	stroke: 'rgba(0,0,0,0.75)'	
+};
+
+Style.Blue = {
+	fill:   'rgba(125,125,255,0.9)',
+	stroke: 'rgba(125,125,255,0.75)'	
+};
+
+Style.Brown = {
+  fill: 'rgba(130,100,50,0.9)',
+  stroke: 'rgba(130,100,50,0.9)'
+};
+
+Style.Green = {
+	fill:   'rgba(125,255,125,0.9)',
+	stroke: 'rgba(125,255,125,0.75)'	
+};
+
+Style.Red = {
+	fill:   'rgba(225,90,90,0.9)',
+	stroke: 'rgba(225,90,90,0.75)'
+};
+
+Style.White = {
+	fill:   'rgba(255,255,255,0.9)',
+	stroke: 'rgba(255,255,255,0.75)'		
+};
+

@@ -1,0 +1,61 @@
+* {
+	font-family: 'Droid Sans', 'Lucida Grande', 'Verdana';
+	font-size: 10pt;
+}
+h1 {
+	font-size: 1em;
+}
+h2 {
+	font-size: 1.4em;
+}
+#myGraph {
+	border: 1px solid #ccc;
+	margin-bottom: 1em;
+}
+
+#myView {
+	border: 1px solid #ccc;
+}
+
+.done {
+}
+#controls {
+  padding: 1em 0;
+}
+.slider {
+  width: 10em;
+}
+#controls .ui-slider .ui-slider-handle {
+	width: 0.5em; margin-left: -0.25em;
+}
+#controls .ui-slider {
+	height: 10px;
+}
+#controls input[type="text"] {
+  width: 5em;
+  font-size: 1.8em;
+  border: none;
+}
+#controls .text {
+}
+#controls input[type="button"] {
+  display: inline;
+}
+ul, li {
+  list-style: none;
+  margin: 0 1.5em 0 0;
+  padding: 0;
+}
+
+ul.compact li {
+  float:left;
+  margin-right: 1em;
+  width: 15em;
+}
+
+fieldset {
+  margin: 0.5em 0 1em 0;
+  padding: 0;
+  border: none;
+  clear: both;
+}

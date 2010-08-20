@@ -9,7 +9,7 @@ function Graph(canvasId) {
 	this.setLayout(DefaultLayout);
 	this.setDisplay(DefaultDisplay);
 	this.setTheme(DefaultTheme);
-	this.setDepth(10);
+	this.setDepth(-1);
 	this.callbacks = {};
 }
 
@@ -44,6 +44,12 @@ Graph.prototype = {
 	},
 	getTheme : function() {
 		return this.theme;
+	},
+	setRoot : function(node) {
+		if (node !== undefined) {
+			this.root = node;
+			this.cacheReachableNodes();
+		}
 	}
 };
 
@@ -63,8 +69,8 @@ Graph.prototype.add = function() {
 		}
 	}
 
-	if (this.rootNode == undefined) {
-		this.rootNode = node;
+	if (this.root == undefined) {
+		this.root = node;
 	}
 
 	// Any time a node is added to the graph, we need to determine
@@ -186,7 +192,7 @@ Graph.prototype.eachEdge = function(curry,context) {
  * visible nodes should be recalculated.
  */
 Graph.prototype.cacheReachableNodes = function() {
-	if ((this.nodes == undefined) || (this.rootNode == undefined)) {
+	if ((this.nodes == undefined) || (this.root == undefined)) {
 		this.reachable = [];
 		return [];
 	}
@@ -199,7 +205,7 @@ Graph.prototype.cacheReachableNodes = function() {
 	// If the depth is actually specified then traverse, otherwise we assume
 	// all nodes should be displayed.
 	if (this.getDepth() >= 0) {
-		this.reachable = this.rootNode.traverse( {}, this.getDepth());
+		this.reachable = this.root.traverse( {}, this.getDepth());
 	} else {
 		this.reachable = this.nodes;
 	}
