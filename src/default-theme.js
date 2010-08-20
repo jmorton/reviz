@@ -49,6 +49,9 @@ DefaultTheme.prototype.drawNode = function(node, context) {
 	context.stroke();
 	context.fill();
 
+	if (node.image !== undefined) {
+		this.drawImage(node, context);
+	}
 	this.drawLabel(node, context);
 
 	context.restore();
@@ -114,6 +117,12 @@ DefaultTheme.prototype.drawEdge = function(node1, node2, context) {
 	context.restore();
 };
 
+DefaultTheme.prototype.drawImage = function(node, context) {
+	context.save();
+	context.drawImage(node.image, -(Style.Node.size+node.image.width/2), -(node.image.height/2));
+	context.restore();
+};
+
 var Style = {
 	Scene : {
 		background : "rgb(112,112,112)"
@@ -126,7 +135,7 @@ var Style = {
 		fill : "rgba(210,210,210,0.8)",
 		stroke : "rgba(55,55,55,0.9)",
 		lineWidth : 3,
-		font : '600 14px/2 "Android Sans", "Lucida Grande", sans-serif',
+		font : '400 14px/2 "Android Sans", "Lucida Grande", sans-serif',
 		fontColor : "rgba(0,0,0,0.9)",
 		drag : {
 			fill : "rgba(225,225,225,0.9)",
@@ -142,6 +151,7 @@ var Style = {
 		select : {
 			fill : "rgba(255,255,255,1.0)",
 			stroke : "rgba(255,255,255,1.0)",
+			font : '800 14px/2 "Android Sans", "Lucida Grande", sans-serif',
 			fontColor : "rgba(0,0,0,0.9)"
 		},
 		collapse : {
